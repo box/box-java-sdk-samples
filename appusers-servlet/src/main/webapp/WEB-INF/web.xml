@@ -46,7 +46,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DocDetails</servlet-name>
-        <url-pattern>/doc</url-pattern>
+        <url-pattern>/docdetails</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Download</servlet-name>

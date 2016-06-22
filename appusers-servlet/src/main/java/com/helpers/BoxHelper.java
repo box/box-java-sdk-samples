@@ -66,11 +66,8 @@ public final class BoxHelper {
         try {
             BoxDeveloperEditionAPIConnection adminClient = BoxDeveloperEditionAPIConnection.getAppEnterpriseConnection(
                     ENTERPRISE_ID, CLIENT_ID, CLIENT_SECRET, jwtEncryptionPreferences, accessTokenCache);
-            System.out.format("returning a BoxDeveloperEditionAPIConnection from adminClient");
-
             return adminClient;
         } catch (BoxAPIException apiException) {
-            System.out.format("Error: BoxDeveloperEditionAPIConnection %s \n\n", apiException.getMessage());
             apiException.printStackTrace();
             throw apiException;
         }
@@ -92,7 +89,6 @@ public final class BoxHelper {
                     userId, CLIENT_ID, CLIENT_SECRET, jwtEncryptionPreferences, accessTokenCache);
             return userClient;
         } catch (BoxAPIException apiException) {
-            System.out.format("Error: BoxDeveloperEditionAPIConnection %s \n\n", apiException.getMessage());
             apiException.printStackTrace();
             throw apiException;
         }
@@ -130,13 +126,9 @@ public final class BoxHelper {
             CreateUserParams params = new CreateUserParams();
             params.setSpaceAmount(1073741824); //1 GB
             BoxUser.Info user = BoxUser.createAppUser(adminClient(), name, params);
-            System.out.format("User created with name %s and id %s  \n\n", user.getLogin(), user.getID());
             boxUserId = user.getID();
-
             BoxAPIConnection boxUserClient = userClient(boxUserId);
-
             BoxFolder.getRootFolder(boxUserClient).createFolder("Test Folder");
-
             InputStream file = request.getServletContext().getResourceAsStream("/assets/test.txt");
             BoxFolder.getRootFolder(boxUserClient).uploadFile(file, "test.txt");
         } else {
@@ -167,27 +159,16 @@ public final class BoxHelper {
             if (appUserName == null) {  // session has timed out. Force re-login
                 return null;
             }
-
-
             BoxAPIConnection api = BoxHelper.adminClient();
-
-
             Iterable<BoxUser.Info> appUsers = BoxUser.getAllEnterpriseUsers(api);
-
             //  Iterable<BoxUser.Info> appUsers = adminUser.getAllEnterpriseUsers(api);
-
             for (BoxUser.Info user : appUsers) {
                 if (user.getName().toUpperCase().equals(appUserName.toUpperCase())) {
                     boxId = user.getID();
-                    System.out.format("Found User with Login  %s and name %s and  id %s \n",
-                            user.getLogin(), user.getName(), user.getID());
                     return boxId;
-                } else {
-                    System.out.format("Found User with Login  %s and name %s and  id %s \n",
-                            user.getLogin(), user.getName(), user.getID());
                 }
             }
-            System.out.format("Error: Did not find user name %s \n\n", appUserName);
+
         }
         return boxId;
     }

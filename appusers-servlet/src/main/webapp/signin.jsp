@@ -7,7 +7,7 @@
 
     <h3> Sign In</h3>
 <form action="signin" method="post">
-       <fieldset style="width: 300px">
+       <fieldset classs="signin-app-user-fieldset">
            <legend> Sign is as App User </legend>
            <table>
                <tr>

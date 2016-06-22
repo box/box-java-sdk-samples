@@ -7,7 +7,7 @@
 
     <h3> Create New App User</h3>
 <form action="createuser" method="post">
-       <fieldset style="width: 300px">
+       <fieldset class="create-app-user-fieldset">
            <legend> Create App User </legend>
            <table>
                <tr>

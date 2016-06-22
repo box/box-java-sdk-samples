@@ -15,21 +15,18 @@ public class CreateUserServlet extends HttpServlet {
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        log(" SignIn Path: " + request.getServletPath());
         response.setContentType("text/html");
 
-        String n = request.getParameter("username");
-        String p = request.getParameter("userpass");
+        String username = request.getParameter("username");
+        String userpass = request.getParameter("userpass");
         BoxHelper.setBoxAppUserId(request, null);
-        BoxHelper.setBoxAppUserName(request, n);
+        BoxHelper.setBoxAppUserName(request, username);
         if (BoxHelper.prepareBoxUser(request, request.getParameter("username"), true)) {
             HttpSession session = request.getSession(false);
             if (session != null) {
-                session.setAttribute("name", n);
+                session.setAttribute("name", username);
             }
             response.sendRedirect("dashboard");
-            // request.getRequestDispatcher("dashboard.jsp").forward(request, response);
-            // request.getRequestDispatcher("login.jsp").forward(request, response);
         } else {
             request.setAttribute("error", "An App User with this name alreadt exists: "
                     + request.getParameter("username"));

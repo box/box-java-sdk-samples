@@ -16,6 +16,8 @@ import com.helpers.BoxHelper;
 
 
 public class DocDetailsServlet extends HttpServlet {
+    // The following document types are supported by Box Preview
+    // https://community.box.com/t5/Managing-Your-Content/What-file-types-are-supported-by-Box-s-Content-Preview/ta-p/327
     static final String[] EXTENSIONS = {"as", "as3", "asm", "bat", "c", "cc", "cmake", "cpp", "cs", "css", "csv", "cxx",
                                         "diff", "doc", "docx", "erb", "gdoc", "groovy", "gsheet", "h", "haml", "hh",
                                         "htm", "html", "java", "js", "less", "m", "make", "ml", "mm", "msg", "ods",
