@@ -4,10 +4,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.box.samples.aws.sns</groupId>
-	<artifactId>box-samples-aws-sns</artifactId>
+	<artifactId>box-webhook-aws-sns</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
 
-	<name>box-samples-aws-sns</name>
+	<name>box-webhook-aws-sns</name>
 
 	<properties>
 		<!-- Project encoding -->
