@@ -12,10 +12,8 @@ import com.helpers.BoxHelper;
 
 public class SignInServlet extends HttpServlet {
 
-
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        log(" SignIn Path: " + request.getServletPath());
         response.setContentType("text/html");
         BoxHelper.setBoxAppUserName(request, request.getParameter("username"));
         BoxHelper.setBoxAppUserId(request, null);
@@ -33,14 +31,5 @@ public class SignInServlet extends HttpServlet {
         // request.getRequestDispatcher("dashboard.jsp").forward(request, response);
 
     }
-
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        log(" SignIn Path: " + request.getServletPath());
-        response.setContentType("text/html");
-        HttpSession session = request.getSession(false);
-    }
-
-
 
 }

@@ -15,6 +15,7 @@ public class DownloadServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
+        response.setContentType("text/html");
         String boxFileId = request.getParameter("id");
         String boxAppUserId = BoxHelper.getBoxAppUserId(request);
         if (boxAppUserId == null) { // session timeout. force login again.

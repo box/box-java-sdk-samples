@@ -27,7 +27,7 @@ public class DashboardServlet extends HttpServlet {
             request.getRequestDispatcher("login.jsp").forward(request, response);
             return;
         }
-
+        response.setContentType("text/html");
         request.setAttribute("dashboardMessage", "App User: " + BoxHelper.getBoxAppUserName(request));
         BoxAPIConnection userClient = BoxHelper.userClient(BoxHelper.getBoxAppUserId(request));
         if (userClient == null) { // session timeout. force login again.

@@ -16,7 +16,6 @@ public class CreateUserServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html");
-
         String username = request.getParameter("username");
         String userpass = request.getParameter("userpass");
         BoxHelper.setBoxAppUserId(request, null);
@@ -34,23 +33,4 @@ public class CreateUserServlet extends HttpServlet {
 
         }
     }
-
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        log(" SignIn Path: " + request.getServletPath());
-        response.setContentType("text/html");
-
-        String n = request.getParameter("username");
-        String p = request.getParameter("userpass");
-        BoxHelper.setBoxAppUserId(request, null);
-        BoxHelper.prepareBoxUser(request, request.getParameter("username"), true);
-
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.setAttribute("name", n);
-        }
-
-    }
-
-
 }

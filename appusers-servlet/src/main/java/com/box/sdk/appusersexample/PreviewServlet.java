@@ -19,8 +19,8 @@ public class PreviewServlet extends HttpServlet {
             IOException {
         String boxFileId = request.getParameter("id");
         String boxId = BoxHelper.getBoxAppUserId(request);
-
         URL previewUrl;
+        response.setContentType("text/html");
         BoxAPIConnection userClient = BoxHelper.userClient(boxId);
         if (userClient == null) { // session timeout. force login again.
             request.getRequestDispatcher("login.jsp").forward(request, response);

@@ -28,7 +28,7 @@ public class LoginServlet extends HttpServlet {
         Handler handler = new ConsoleHandler();
         handler.setLevel(Level.FINE);
         logger.addHandler(handler);
-        log(" init called ");
+        log(" LoginServlet init called ");
     }
 
     /**
@@ -40,7 +40,7 @@ public class LoginServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        log(" Servlet Path: " + request.getServletPath());
+        response.setContentType("text/html");
         request.setAttribute("connectMessage", "Connecting");
         BoxAPIConnection adminClient = BoxHelper.adminClient();
         if (adminClient != null) {
