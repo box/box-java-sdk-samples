@@ -50,7 +50,7 @@ mvn clean package
 
 Your WAR file will be located in `box-webhook-aws-webapp/target` directory.
 
-### Or Build with Gradle
+##### Or Build with Gradle
 ```sh
 gradle war
 ```
@@ -76,15 +76,43 @@ For Amazon Web Services we are going to use the following services:
   * easy-to-use deployment of our example web application on Amazon
   * more information can be found [here](https://aws.amazon.com/elasticbeanstalk/)
 
+#### Preparing Roles
+ 1. 
+
 #### DynamoDB
+ 1. Go to [DynamoDB Console](https://console.aws.amazon.com/dynamodb)
+ 2. Click on Create Table
+ 3. Fill out Table name (e.g. 'box-webhook-sns')
+ 4. 
 
 #### SNS
+ 1. Go to [SNS Console](https://console.aws.amazon.com/sns/v2/home)
+ 2. Click on Create Topic action
+ 3. Fill out Topic name (e.g. 'box-webhook-sns') and Display name (optional) and click on Create topic
 
 #### Lambda
-
+ 1. Go to [Lambda Console](https://console.aws.amazon.com/lambda/home)
+ 2. Click on Get Started Now
+ 3. Skip Blueprint Selection screen
+ 4. Fill out function Name (e.g. 'box-webhook-sns'), choose Java 8 from Runtime dropdown list
+ 5. Upload `box-webhook-aws-sns-{version}.zip` file built in earlier
+ 6. Use 'com.box.samples.aws.sns.BoxAWSSNSLambda::handleRequest' as value for Handler
+ 7. 
+ 
 #### API Gateway
 
+
 #### Elastic Beanstalk
+ 1. Go to [Elastic Beanstalk Console](https://console.aws.amazon.com/elasticbeanstalk)
+ 2. Click on Create New Application (top-right corner)
+ 3. Fill our Application Name (e.g. box-aws-webhook-webapp) and Description (optional) and click Next
+ 4. Click on Create web server (in Web Server Environment section)
+ 5. From Predefined configuration dropdown list choose 'Tomcat' and as Environment type choose 'Single instance' and click Next
+ 6. Select 'Upload your own' as source of the application and use Choose File to locate the WAR file of the application and click Next
+ 7. On Environment Information you leave everything as default or change it to your own and click Next
+ 8. Go through the next screens and leave entries as default or change them to your need and proceed to Review Information screen
+ 9. After reviewing your setup click on Launch
+ 10. Launching the environment and deploying the application might take some time, but after done, you should be able to access your Web Application on the URL specified for the Application
 
 ### Example in Action
 After the setup above everything should be ready to test the example. 
@@ -93,4 +121,4 @@ After the setup above everything should be ready to test the example.
  3. Open any of your files, which supports Preview
  4. Now you can fill out Email Address for notification and confirm it by OK
  5. If everything is set up properly you should get Subscription Confirmation Email from AWS Notifications, which you must Confirm (using the link in email)
- 6.  
+ 6. Preview the file to test the functionality
