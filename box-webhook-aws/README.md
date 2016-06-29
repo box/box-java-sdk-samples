@@ -2,29 +2,28 @@
 
 ### Prerequisites
 
-In order to package this example you will need to have Maven installed.
+In order to package this example you will need to have Gradle installed.
 
-On a Mac, you can install Maven with [brew](http://brew.sh/):
+On a Mac, you can install Gradle with [brew](http://brew.sh/):
 ```sh
-brew install maven
+brew install gradle
 ```
 
-For other platforms see information on Maven website [here](https://maven.apache.org/install.html) . 
+For other platforms see information on Gradle website [here](https://docs.gradle.org/current/userguide/installation.html) . 
 
-Check that your maven version is 3.0.x or above:
+Check that your Gradle is installed correctly with:
 ```sh
-mvn -v
+gradle -v
 ```
 
 You will need to have Amazon Web Services account created to use this example. To create new account visit [here](https://console.aws.amazon.com/console/home).
 
 ###  This is a sample Application and Not Production Code
 
-In order to create the simplest possible code to demonstrate how to create and use App Users from a Java servlet
-this sample COMPLETELY IGNORES App User Authentication.  It asks for passwords but ignores them.
+In order to create the simplest possible code to demonstrate how to use Box Webhooks together with AWS this sample COMPLETELY IGNORES App User Authentication.  
+It asks for passwords but ignores them.
 
-
-###  Create a Application that supports App Users
+###  Create a Box Application that supports App Users
 
 You will need to create an application that supports app users and describe it in a configuration file `box-webhook-aws-webapp/src/main/resources/dms-config.properties` like the following:
 ```sh
@@ -34,28 +33,11 @@ boxEnterpriseId=<YOUR_BOX_ENTERPRISE_ID>
 boxPrivateKeyFile=<YOUR_JWT_PRIVATE_KEY_FILENAME>
 boxPrivateKeyPassword=<YOUR_JWT_PRIVATE_KEY_PASSWORD>
 boxPublicKeyId=<YOUR_JWT_PUBLIC_KEY_ID>
-awsAPIGatewayURL=<YOUR_AWS_API_GATEWAY_URL>
 ```
-These steps are described heere
-[https://docs.box.com/docs/configuring-box-platform](https://docs.box.com/docs/configuring-box-platform)
+These steps are described [here](https://docs.box.com/docs/configuring-box-platform).
 
+_Note:_
 `<YOUR_JWT_PRIVATE_KEY_FILENAME>` must be located in `box-webhook-aws-webapp/src/main/resources/` directory.
-
-### Preparing Web Application Package
-
-In order to build the web application you must execute in `box-webhook-aws-webapp` directory:
-```sh
-mvn clean package
-```
-
-Your WAR file will be located in `box-webhook-aws-webapp/target` directory.
-
-##### Or Build with Gradle
-```sh
-gradle war
-```
-
-And your WAR file will be located in `box-webhook-aws-webapp/build/lib` directory.
 
 ### Preparing AWS Environment
 For Amazon Web Services we are going to use the following services:
@@ -75,44 +57,23 @@ For Amazon Web Services we are going to use the following services:
 * **Elastic Beanstalk**
   * easy-to-use deployment of our example web application on Amazon
   * more information can be found [here](https://aws.amazon.com/elasticbeanstalk/)
+* **CloudFormation**
+  * gives an easy way to create and manage a collection of related AWS resources
+  * service used to prepare our Sample AWS Environment
 
-#### Preparing Roles
- 1. 
+#### Preparing CloudFormation Package
 
-#### DynamoDB
- 1. Go to [DynamoDB Console](https://console.aws.amazon.com/dynamodb)
- 2. Click on Create Table
- 3. Fill out Table name (e.g. 'box-webhook-sns')
- 4. 
+In order to build package used to prepare AWS environment, we will build ZIP file which will be then used as environemnt configuration for CloudFormation.
+To build the package run:
+```sh
+gradle cloudformation
+```
 
-#### SNS
- 1. Go to [SNS Console](https://console.aws.amazon.com/sns/v2/home)
- 2. Click on Create Topic action
- 3. Fill out Topic name (e.g. 'box-webhook-sns') and Display name (optional) and click on Create topic
+The build process will build WAR file for our Web Application to be deployed on Elastic Beanstalk, ZIP files for Lambda functions as well as CloudFormation configuration for roles, API Gateway to be glued together.
+Files will be contained in `` CloudFormation Package file.
 
-#### Lambda
- 1. Go to [Lambda Console](https://console.aws.amazon.com/lambda/home)
- 2. Click on Get Started Now
- 3. Skip Blueprint Selection screen
- 4. Fill out function Name (e.g. 'box-webhook-sns'), choose Java 8 from Runtime dropdown list
- 5. Upload `box-webhook-aws-sns-{version}.zip` file built in earlier
- 6. Use 'com.box.samples.aws.sns.BoxAWSSNSLambda::handleRequest' as value for Handler
- 7. 
- 
-#### API Gateway
-
-
-#### Elastic Beanstalk
- 1. Go to [Elastic Beanstalk Console](https://console.aws.amazon.com/elasticbeanstalk)
- 2. Click on Create New Application (top-right corner)
- 3. Fill our Application Name (e.g. box-aws-webhook-webapp) and Description (optional) and click Next
- 4. Click on Create web server (in Web Server Environment section)
- 5. From Predefined configuration dropdown list choose 'Tomcat' and as Environment type choose 'Single instance' and click Next
- 6. Select 'Upload your own' as source of the application and use Choose File to locate the WAR file of the application and click Next
- 7. On Environment Information you leave everything as default or change it to your own and click Next
- 8. Go through the next screens and leave entries as default or change them to your need and proceed to Review Information screen
- 9. After reviewing your setup click on Launch
- 10. Launching the environment and deploying the application might take some time, but after done, you should be able to access your Web Application on the URL specified for the Application
+#### Deploying CloudFormation Package
+TODO
 
 ### Example in Action
 After the setup above everything should be ready to test the example. 
