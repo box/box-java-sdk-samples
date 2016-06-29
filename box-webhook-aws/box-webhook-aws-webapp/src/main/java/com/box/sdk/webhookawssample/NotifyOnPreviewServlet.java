@@ -1,6 +1,8 @@
 package com.box.sdk.webhookawssample;
 
 import com.box.sdk.BoxDeveloperEditionAPIConnection;
+import com.box.sdk.BoxFile;
+import com.box.sdk.BoxWebHook;
 import com.box.sdk.webhookawssample.helpers.AWSHelper;
 import com.box.sdk.webhookawssample.helpers.BoxHelper;
 import com.mashape.unirest.http.utils.ClientFactory;
@@ -19,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * @author Vladimir Hrusovsky
@@ -42,7 +46,7 @@ public class NotifyOnPreviewServlet extends HttpServlet {
         final String email = request.getParameter("emailAddress");
         final String webhookTriggerID = registerWebhookTrigger(userId, fileId, email);
 
-        createWebhook(userId, webhookTriggerID);
+        createWebhook(userId, fileId, webhookTriggerID);
 
         //refresh page after done
         response.sendRedirect("docdetails?id=" + fileId);
@@ -96,10 +100,14 @@ public class NotifyOnPreviewServlet extends HttpServlet {
      * @param userId id of user
      * @param webhookTriggerId id of trigger registered on AWS
      */
-    private void createWebhook(String userId, String webhookTriggerId) {
-        final String triggerURL = AWSHelper.getAPIGatewayInvokeWebhookEmailTriggerURL(webhookTriggerId);
+    private void createWebhook(String userId, String fileId, String webhookTriggerId) throws MalformedURLException {
         final BoxDeveloperEditionAPIConnection boxConnection = BoxHelper.userClient(userId);
+        final BoxFile file = new BoxFile(boxConnection, fileId);
 
-        //TODO: Box Webhooks
+        file.addWebHook(createWebhookURL(webhookTriggerId), BoxWebHook.Trigger.FILE_PREVIEWED);
+    }
+
+    private URL createWebhookURL(String webhookTriggerId) throws MalformedURLException {
+        return new URL(AWSHelper.getAPIGatewayInvokeWebhookEmailTriggerURL(webhookTriggerId));
     }
 }
