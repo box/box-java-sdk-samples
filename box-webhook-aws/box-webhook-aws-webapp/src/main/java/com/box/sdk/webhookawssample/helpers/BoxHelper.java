@@ -105,7 +105,8 @@ public final class BoxHelper {
      * @param request       The Post request containing a app user name and password
      * @param name          the login name for an existing or new Ap user account
      * @param createAccount boolean. If true allow creation of a new account
-     *                      if false look for an existing App User with this name in thie enterprise.
+     *                      if false we assume an app user by this name alread exists in this enterprise and
+     *                      return false if there is no such app user.
      * @return boolean true if the app user was either found or created successfully, false otherwise
      */
     public static boolean prepareBoxUser(HttpServletRequest request, String name, Boolean createAccount) {

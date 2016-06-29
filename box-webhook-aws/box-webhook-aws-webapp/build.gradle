@@ -12,6 +12,6 @@ repositories {
 dependencies {
     compile 'javax.servlet:javax.servlet-api:3.0.1'
     compile 'javax.servlet:jstl:1.2'
-    compile 'com.box:box-java-sdk:2.1.0'
+    compile 'com.box:box-java-sdk:2.2.1-SNAPSHOT'
     compile 'com.mashape.unirest:unirest-java:1.4.5'
 }

@@ -6,6 +6,10 @@
         version="2.5">
     <display-name>Webhook Servlet Example</display-name>
 
+    <welcome-file-list>
+        <welcome-file>login.jsp</welcome-file>
+    </welcome-file-list>
+
     <!-- Servlets -->
     <servlet>
         <servlet-name>Login</servlet-name>

@@ -13,6 +13,8 @@ import java.io.OutputStream;
 
 public class ThumbnailServlet extends HttpServlet {
     private static final int MAX_RETRIES = 3;
+    private static final int THMB_SIZE = 256;
+    private static final int SLEEP_MS = 2000;
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
@@ -31,11 +33,11 @@ public class ThumbnailServlet extends HttpServlet {
         int retries = 0;
         // Thumbnails are not always generated immediately upon upload
         do {
-            thumbBytes = file.getThumbnail(BoxFile.ThumbnailFileType.PNG, 256, 256, 256, 256);
+            thumbBytes = file.getThumbnail(BoxFile.ThumbnailFileType.PNG, THMB_SIZE, THMB_SIZE, THMB_SIZE, THMB_SIZE);
             if (thumbBytes.length == 0) {
                 retries++;
                 try {
-                    Thread.sleep(2000); // wait a couple of seconds for conversion to generate a thumbnail
+                    Thread.sleep(SLEEP_MS); // wait a couple of seconds for conversion to generate a thumbnail
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                 }
