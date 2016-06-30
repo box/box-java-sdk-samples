@@ -24,124 +24,124 @@ import com.box.sdk.JWTEncryptionPreferences;
 
 /**
  * Services provider.
- * 
+ *
  * @author Stanislav Dvorscak
  *
  */
 public class Services {
 
-	/**
-	 * Logger for this class.
-	 */
-	private final Logger logger = LoggerFactory.getLogger(Services.class);
+    /**
+     * Logger for this class.
+     */
+    private final Logger logger = LoggerFactory.getLogger(Services.class);
 
-	/**
-	 * @see #getConfiguration()
-	 */
-	private final Supplier<Configuration> configurationProvider = LambdaUtils.lazy(this::configuration);
+    /**
+     * @see #getConfiguration()
+     */
+    private final Supplier<Configuration> configurationProvider = LambdaUtils.lazy(this::configuration);
 
-	/**
-	 * {@link IAccessTokenCache} for {@link #getBoxAPIConnection(String)}
-	 */
-	private final Supplier<IAccessTokenCache> boxAccessTokenCache = LambdaUtils.lazy(() -> new InMemoryLRUAccessTokenCache(1024));
+    /**
+     * {@link IAccessTokenCache} for {@link #getBoxAPIConnection(String)}.
+     */
+    private final Supplier<IAccessTokenCache> boxAccessTokenCache = LambdaUtils.lazy(() -> new InMemoryLRUAccessTokenCache(1024));
 
-	/**
-	 * @see #getAmazonDynamoDB()
-	 */
-	private final Supplier<AmazonDynamoDB> dynamoDBProvider = LambdaUtils.lazy(this::amazonDynamoDB);
+    /**
+     * @see #getAmazonDynamoDB()
+     */
+    private final Supplier<AmazonDynamoDB> dynamoDBProvider = LambdaUtils.lazy(this::amazonDynamoDB);
 
-	/**
-	 * @see #getAmazonSNS()
-	 */
-	private final Supplier<AmazonSNS> snsProvider = LambdaUtils.lazy(this::sns);
+    /**
+     * @see #getAmazonSNS()
+     */
+    private final Supplier<AmazonSNS> snsProvider = LambdaUtils.lazy(this::sns);
 
-	/**
-	 * Constructor.
-	 */
-	public Services() {
-	}
+    /**
+     * Constructor.
+     */
+    public Services() {
+    }
 
-	/**
-	 * @return resolves {@link Configuration}
-	 */
-	public Configuration getConfiguration() {
-		return configurationProvider.get();
-	}
+    /**
+     * @return resolves {@link Configuration}
+     */
+    public Configuration getConfiguration() {
+        return configurationProvider.get();
+    }
 
-	/**
-	 * @return {@link Configuration} factory.
-	 */
-	private Configuration configuration() {
-		Properties properties = new Properties();
-		InputStream propertiesStream = null;
-		try {
-			propertiesStream = getClass().getClassLoader().getResourceAsStream("box-samples-aws-sns.properties");
-			properties.load(propertiesStream);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (propertiesStream != null) {
-				try {
-					propertiesStream.close();
-				} catch (IOException e) {
-					logger.error("Can not close properties stream: ", e);
-				}
-			}
-		}
+    /**
+     * @return {@link Configuration} factory.
+     */
+    private Configuration configuration() {
+        Properties properties = new Properties();
+        InputStream propertiesStream = null;
+        try {
+            propertiesStream = getClass().getClassLoader().getResourceAsStream("box-samples-aws-sns.properties");
+            properties.load(propertiesStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (propertiesStream != null) {
+                try {
+                    propertiesStream.close();
+                } catch (IOException e) {
+                    logger.error("Can not close properties stream: ", e);
+                }
+            }
+        }
 
-		return new Configuration(properties);
-	}
+        return new Configuration(properties);
+    }
 
-	/**
-	 * {@link BoxAPIConnection} for a provided user.
-	 * 
-	 * @param userId
-	 *            BOX user ID
-	 * @return resolved {@link BoxAPIConnection}
-	 */
-	public BoxAPIConnection getBoxAPIConnection(String userId) {
-		Configuration configuration = getConfiguration();
+    /**
+     * {@link BoxAPIConnection} for a provided user.
+     *
+     * @param userId
+     *            BOX user ID
+     * @return resolved {@link BoxAPIConnection}
+     */
+    public BoxAPIConnection getBoxAPIConnection(String userId) {
+        Configuration configuration = getConfiguration();
 
-		JWTEncryptionPreferences preference = new JWTEncryptionPreferences();
-		preference.setEncryptionAlgorithm(EncryptionAlgorithm.RSA_SHA_512);
-		preference.setPublicKeyID(configuration.getBoxPublicKeyId());
-		preference.setPrivateKey(configuration.getBoxPrivateKey());
-		preference.setPrivateKeyPassword(configuration.getBoxPrivateKeyPassword());
+        JWTEncryptionPreferences preference = new JWTEncryptionPreferences();
+        preference.setEncryptionAlgorithm(EncryptionAlgorithm.RSA_SHA_512);
+        preference.setPublicKeyID(configuration.getBoxPublicKeyId());
+        preference.setPrivateKey(configuration.getBoxPrivateKey());
+        preference.setPrivateKeyPassword(configuration.getBoxPrivateKeyPassword());
 
-		return BoxDeveloperEditionAPIConnection.getAppUserConnection(userId, configuration.getBoxClientId(),
-				configuration.getBoxClientSecret(), preference, boxAccessTokenCache.get());
-	}
+        return BoxDeveloperEditionAPIConnection.getAppUserConnection(userId, configuration.getBoxClientId(),
+                configuration.getBoxClientSecret(), preference, boxAccessTokenCache.get());
+    }
 
-	/**
-	 * @return factory for {@link #getAmazonSNS()}
-	 */
-	private AmazonSNS sns() {
-		AmazonSNSClient result = new AmazonSNSClient();
-		result.setRegion(Region.getRegion(Regions.EU_CENTRAL_1));
-		return result;
-	}
+    /**
+     * @return factory for {@link #getAmazonSNS()}
+     */
+    private AmazonSNS sns() {
+        AmazonSNSClient result = new AmazonSNSClient();
+        result.setRegion(Region.getRegion(Regions.EU_CENTRAL_1));
+        return result;
+    }
 
-	/**
-	 * @return AWS SNS
-	 */
-	public AmazonSNS getAmazonSNS() {
-		return snsProvider.get();
-	}
+    /**
+     * @return AWS SNS
+     */
+    public AmazonSNS getAmazonSNS() {
+        return snsProvider.get();
+    }
 
-	/**
-	 * @return factory for {@link #getAmazonDynamoDB()}
-	 */
-	private AmazonDynamoDB amazonDynamoDB() {
-		AmazonDynamoDBClient result = new AmazonDynamoDBClient();
-		result.setRegion(Region.getRegion(Regions.EU_CENTRAL_1));
-		return result;
-	}
+    /**
+     * @return factory for {@link #getAmazonDynamoDB()}
+     */
+    private AmazonDynamoDB amazonDynamoDB() {
+        AmazonDynamoDBClient result = new AmazonDynamoDBClient();
+        result.setRegion(Region.getRegion(Regions.EU_CENTRAL_1));
+        return result;
+    }
 
-	/**
-	 * @return AWS Dynamo DB.
-	 */
-	public AmazonDynamoDB getAmazonDynamoDB() {
-		return dynamoDBProvider.get();
-	}
+    /**
+     * @return AWS Dynamo DB.
+     */
+    public AmazonDynamoDB getAmazonDynamoDB() {
+        return dynamoDBProvider.get();
+    }
 
 }

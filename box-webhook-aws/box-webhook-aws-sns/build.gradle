@@ -1,5 +1,8 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
+def root = '../..'
+
+apply plugin: 'checkstyle'
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'eclipse'
@@ -10,6 +13,14 @@ version = '0.1.0-SNAPSHOT'
 description = """
     Box: WebHook AWS SNS
 """
+
+checkstyle {
+	configFile = file(root + '/common/checkstyle/checkstyle.xml')
+	configProperties = [ root : "${root}" ]
+}
+
+checkstyleMain { classpath += configurations.compile }
+checkstyleTest { classpath += configurations.compile }
 
 sourceCompatibility = 1.8
 targetCompatibility = sourceCompatibility
