@@ -1,11 +1,14 @@
 package com.box.sdk.webhookawssample;
 
-import com.box.sdk.BoxDeveloperEditionAPIConnection;
-import com.box.sdk.BoxFile;
-import com.box.sdk.BoxWebHook;
-import com.box.sdk.webhookawssample.helpers.AWSHelper;
-import com.box.sdk.webhookawssample.helpers.BoxHelper;
-import com.mashape.unirest.http.utils.ClientFactory;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -15,14 +18,13 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import com.box.sdk.BoxDeveloperEditionAPIConnection;
+import com.box.sdk.BoxFile;
+import com.box.sdk.BoxWebHook;
+import com.box.sdk.webhookawssample.helpers.AWSHelper;
+import com.box.sdk.webhookawssample.helpers.BoxHelper;
+import com.mashape.unirest.http.utils.ClientFactory;
+
 
 /**
  * @author Vladimir Hrusovsky
@@ -41,19 +43,15 @@ public class NotifyOnPreviewServlet extends HttpServlet {
         log("NotifyOnPreview Path: " + request.getServletPath());
         response.setContentType("text/html");
 
-        final String userId = getCurrentUserId(request);
+        final String userId = BoxHelper.getBoxAppUserId(request);
         final String fileId = request.getParameter("fileId");
         final String email = request.getParameter("emailAddress");
         final String webhookTriggerID = registerWebhookTrigger(userId, fileId, email);
 
-        createWebhook(userId, fileId, webhookTriggerID);
+        createPreviewFileWebhook(userId, fileId, webhookTriggerID);
 
         //refresh page after done
         response.sendRedirect("docdetails?id=" + fileId);
-    }
-
-    private String getCurrentUserId(HttpServletRequest request) {
-        return BoxHelper.getBoxAppUserId(request);
     }
 
     /**
@@ -68,23 +66,35 @@ public class NotifyOnPreviewServlet extends HttpServlet {
     private String registerWebhookTrigger(String userId, String fileId, String email) throws IOException {
         final HttpPost request = new HttpPost(AWSHelper.getAPIGatewayRegisterWebhookEmailTriggerURL());
 
-        //set headers necessary
+        //set headers necessary for JSON data
         request.setHeader("Accept", "application/json");
         request.setHeader("Content-type", "application/json");
-        //set request payload
-        request.setEntity(getWebhookTriggerEntity(userId, fileId, email));
+        //set request payload with webhook trigger entity
+        request.setEntity(createWebhookTriggerEntity(userId, fileId, email));
 
         final HttpResponse response = httpClient.execute(request);
 
         if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-            throw new IOException("Error while trying to register preview notification on AWS: " + response.getStatusLine().getReasonPhrase());
+            throw new IOException("Error while trying to register preview notification on AWS: "
+                    + response.getStatusLine().getReasonPhrase());
         }
 
         final JSONObject responseObject = new JSONObject(EntityUtils.toString(response.getEntity()));
         return responseObject.getString("id");
     }
 
-    private HttpEntity getWebhookTriggerEntity(String userId, String fileId, String email) throws UnsupportedEncodingException {
+    /**
+     * Creates entity passed to AWS for Webhook Trigger email registration.
+     *
+     * @param userId id of user to be registered with the email
+     * @param fileId id of file to be registered with the email
+     * @param email  email to be registered for specified file and user
+     * @return payload entity for Webhook Trigger registration resource
+     * @throws UnsupportedEncodingException
+     */
+    private HttpEntity createWebhookTriggerEntity(String userId, String fileId, String email)
+            throws UnsupportedEncodingException {
+
         return new StringEntity(
                 new JSONObject()
                         .put("userId", userId)
@@ -97,10 +107,12 @@ public class NotifyOnPreviewServlet extends HttpServlet {
     /**
      * Creates Box Webhook for 'Preview File' action, which triggers our AWS API Gateway resource.
      *
-     * @param userId id of user
+     * @param userId           id of user
      * @param webhookTriggerId id of trigger registered on AWS
      */
-    private void createWebhook(String userId, String fileId, String webhookTriggerId) throws MalformedURLException {
+    private void createPreviewFileWebhook(String userId, String fileId, String webhookTriggerId)
+            throws MalformedURLException {
+
         final BoxDeveloperEditionAPIConnection boxConnection = BoxHelper.userClient(userId);
         final BoxFile file = new BoxFile(boxConnection, fileId);
 
