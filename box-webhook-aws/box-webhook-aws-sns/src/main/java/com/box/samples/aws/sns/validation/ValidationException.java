@@ -34,7 +34,7 @@ public class ValidationException extends RuntimeException {
      * @return wrapped {@link Validation}
      */
     public Validation getValidation() {
-        return validation;
+        return this.validation;
     }
 
 }

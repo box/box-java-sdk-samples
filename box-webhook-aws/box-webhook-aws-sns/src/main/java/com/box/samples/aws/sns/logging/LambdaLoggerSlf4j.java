@@ -74,7 +74,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public boolean isTraceEnabled() {
-        return LocationAwareLogger.TRACE_INT >= level.toInt();
+        return LocationAwareLogger.TRACE_INT >= this.level.toInt();
     }
 
     /**
@@ -82,7 +82,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void trace(String msg) {
-        log(Level.TRACE, msg);
+        this.log(Level.TRACE, msg);
     }
 
     /**
@@ -90,7 +90,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void trace(String msg, Throwable t) {
-        log(Level.TRACE, msg, t);
+        this.log(Level.TRACE, msg, t);
     }
 
     /**
@@ -98,7 +98,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void trace(String format, Object arg) {
-        log(Level.TRACE, format, arg);
+        this.log(Level.TRACE, format, arg);
     }
 
     /**
@@ -106,7 +106,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void trace(String format, Object arg1, Object arg2) {
-        log(Level.TRACE, format, arg1, arg2);
+        this.log(Level.TRACE, format, arg1, arg2);
     }
 
     /**
@@ -114,7 +114,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void trace(String format, Object... arguments) {
-        log(Level.TRACE, format, arguments);
+        this.log(Level.TRACE, format, arguments);
     }
 
     /**
@@ -122,7 +122,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public boolean isDebugEnabled() {
-        return LocationAwareLogger.DEBUG_INT >= level.toInt();
+        return LocationAwareLogger.DEBUG_INT >= this.level.toInt();
     }
 
     /**
@@ -130,7 +130,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void debug(String msg) {
-        log(Level.DEBUG, msg);
+        this.log(Level.DEBUG, msg);
     }
 
     /**
@@ -138,7 +138,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void debug(String msg, Throwable t) {
-        log(Level.DEBUG, msg, t);
+        this.log(Level.DEBUG, msg, t);
     }
 
     /**
@@ -146,7 +146,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void debug(String format, Object arg) {
-        log(Level.DEBUG, format, arg);
+        this.log(Level.DEBUG, format, arg);
     }
 
     /**
@@ -154,7 +154,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void debug(String format, Object arg1, Object arg2) {
-        log(Level.DEBUG, format, arg1, arg2);
+        this.log(Level.DEBUG, format, arg1, arg2);
     }
 
     /**
@@ -162,7 +162,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void debug(String format, Object... arguments) {
-        log(Level.DEBUG, format, arguments);
+        this.log(Level.DEBUG, format, arguments);
     }
 
     /**
@@ -170,7 +170,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public boolean isInfoEnabled() {
-        return LocationAwareLogger.INFO_INT >= level.toInt();
+        return LocationAwareLogger.INFO_INT >= this.level.toInt();
     }
 
     /**
@@ -178,7 +178,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void info(String msg) {
-        log(Level.INFO, msg);
+        this.log(Level.INFO, msg);
     }
 
     /**
@@ -186,7 +186,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void info(String msg, Throwable t) {
-        log(Level.INFO, msg, t);
+        this.log(Level.INFO, msg, t);
     }
 
     /**
@@ -194,7 +194,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void info(String format, Object arg) {
-        log(Level.INFO, format, arg);
+        this.log(Level.INFO, format, arg);
     }
 
     /**
@@ -202,7 +202,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void info(String format, Object arg1, Object arg2) {
-        log(Level.INFO, format, arg1, arg2);
+        this.log(Level.INFO, format, arg1, arg2);
     }
 
     /**
@@ -210,7 +210,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void info(String format, Object... arguments) {
-        log(Level.INFO, format, arguments);
+        this.log(Level.INFO, format, arguments);
     }
 
     /**
@@ -218,7 +218,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public boolean isWarnEnabled() {
-        return LocationAwareLogger.WARN_INT >= level.toInt();
+        return LocationAwareLogger.WARN_INT >= this.level.toInt();
     }
 
     /**
@@ -226,7 +226,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void warn(String msg) {
-        log(Level.WARN, msg);
+        this.log(Level.WARN, msg);
     }
 
     /**
@@ -234,7 +234,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void warn(String msg, Throwable t) {
-        log(Level.WARN, msg, t);
+        this.log(Level.WARN, msg, t);
     }
 
     /**
@@ -242,7 +242,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void warn(String format, Object arg) {
-        log(Level.WARN, format, arg);
+        this.log(Level.WARN, format, arg);
     }
 
     /**
@@ -250,7 +250,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void warn(String format, Object arg1, Object arg2) {
-        log(Level.WARN, format, arg1, arg2);
+        this.log(Level.WARN, format, arg1, arg2);
     }
 
     /**
@@ -258,7 +258,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void warn(String format, Object... arguments) {
-        log(Level.WARN, format, arguments);
+        this.log(Level.WARN, format, arguments);
     }
 
     /**
@@ -266,7 +266,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public boolean isErrorEnabled() {
-        return LocationAwareLogger.ERROR_INT >= level.toInt();
+        return LocationAwareLogger.ERROR_INT >= this.level.toInt();
     }
 
     /**
@@ -274,7 +274,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void error(String msg) {
-        log(Level.ERROR, msg);
+        this.log(Level.ERROR, msg);
     }
 
     /**
@@ -282,7 +282,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void error(String msg, Throwable t) {
-        log(Level.ERROR, msg, t);
+        this.log(Level.ERROR, msg, t);
     }
 
     /**
@@ -290,7 +290,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void error(String format, Object arg) {
-        log(Level.ERROR, format, arg);
+        this.log(Level.ERROR, format, arg);
     }
 
     /**
@@ -298,7 +298,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void error(String format, Object arg1, Object arg2) {
-        log(Level.ERROR, format, arg1, arg2);
+        this.log(Level.ERROR, format, arg1, arg2);
     }
 
     /**
@@ -306,7 +306,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      */
     @Override
     public void error(String format, Object... arguments) {
-        log(Level.ERROR, format, arguments);
+        this.log(Level.ERROR, format, arguments);
     }
 
     /**
@@ -319,7 +319,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      *            of {@link FormattingTuple}
      */
     private void log(Level level, String format, Object arg) {
-        log(level, MessageFormatter.format(format, arg));
+        this.log(level, MessageFormatter.format(format, arg));
     }
 
     /**
@@ -334,7 +334,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      *            of {@link FormattingTuple}
      */
     private void log(Level level, String format, Object arg1, Object arg2) {
-        log(level, MessageFormatter.format(format, arg1, arg2));
+        this.log(level, MessageFormatter.format(format, arg1, arg2));
     }
 
     /**
@@ -347,7 +347,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      *            of {@link FormattingTuple}
      */
     private void log(Level level, String format, Object... args) {
-        log(level, MessageFormatter.arrayFormat(format, args));
+        this.log(level, MessageFormatter.arrayFormat(format, args));
     }
 
     /**
@@ -361,7 +361,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
      *            created {@link FormattingTuple}
      */
     private void log(Level level, FormattingTuple tupple) {
-        log(level, tupple.getMessage(), tupple.getThrowable());
+        this.log(level, tupple.getMessage(), tupple.getThrowable());
     }
 
     /**
@@ -397,7 +397,7 @@ public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
             builder.append(stringWriter.toString()).append('\n');
         }
 
-        logger.log(String.format("[%s] [%s] [%s] %s", level, formatter.format(Instant.now()), name, builder.toString()));
+        logger.log(String.format("[%s] [%s] [%s] %s", this.level, this.formatter.format(Instant.now()), this.name, builder.toString()));
     }
 
 }

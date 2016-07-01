@@ -63,11 +63,11 @@ public class BoxAWSSNSLambda implements RequestStreamHandler {
 
             try {
                 JSONObject request = request(input);
-                response = handle(request);
+                response = this.handle(request);
             } catch (ValidationException e) {
                 response = ResponseBuilder.badRequest(e.getValidation());
             } catch (Exception e) {
-                logger.error("Invocation failed: ", e);
+                this.logger.error("Invocation failed: ", e);
                 response = ResponseBuilder.error();
             }
 
@@ -110,7 +110,7 @@ public class BoxAWSSNSLambda implements RequestStreamHandler {
         ValidationUtils.notBlank(validation, "command", command);
         validation.validate();
 
-        return handle(request, command);
+        return this.handle(request, command);
     }
 
     /**
@@ -127,11 +127,11 @@ public class BoxAWSSNSLambda implements RequestStreamHandler {
             case "/ping":
                 return ResponseBuilder.ok();
             case "/sns/e-mail":
-                return ResponseBuilder.ok(email(request));
+                return ResponseBuilder.ok(this.email(request));
             case "/sns/sms":
-                return ResponseBuilder.ok(sms(request));
+                return ResponseBuilder.ok(this.sms(request));
             case "/box/preview":
-                onBoxPreview(request);
+                this.onBoxPreview(request);
                 return ResponseBuilder.ok();
             default:
                 return ResponseBuilder.notFound();
@@ -154,9 +154,9 @@ public class BoxAWSSNSLambda implements RequestStreamHandler {
         validation.validate();
 
         String webHookId = UUID.randomUUID().toString();
-        String topicARN = snsToEmail(webHookId, email);
-        webHookToTopic(webHookId, userId, topicARN);
-        return webHook(webHookId);
+        String topicARN = this.snsToEmail(webHookId, email);
+        this.webHookToTopic(webHookId, userId, topicARN);
+        return this.webHook(webHookId);
     }
 
     /**
@@ -169,7 +169,7 @@ public class BoxAWSSNSLambda implements RequestStreamHandler {
      * @return SNS ARN
      */
     private String snsToEmail(String id, String email) {
-        AmazonSNS sns = services.getAmazonSNS();
+        AmazonSNS sns = this.services.getAmazonSNS();
         String topicARN = sns.createTopic("box_webhook_" + id).getTopicArn();
         sns.subscribe(topicARN, "email", email);
         return topicARN;
@@ -191,9 +191,9 @@ public class BoxAWSSNSLambda implements RequestStreamHandler {
         validation.validate();
 
         String webHookId = UUID.randomUUID().toString();
-        String topicARN = snsForSMS(phone);
-        webHookToTopic(webHookId, userId, topicARN);
-        return webHook(webHookId);
+        String topicARN = this.snsForSMS(phone);
+        this.webHookToTopic(webHookId, userId, topicARN);
+        return this.webHook(webHookId);
     }
 
     /**
@@ -204,7 +204,7 @@ public class BoxAWSSNSLambda implements RequestStreamHandler {
      * @return SNS ARN
      */
     private String snsForSMS(String phone) {
-        AmazonSNS sns = services.getAmazonSNS();
+        AmazonSNS sns = this.services.getAmazonSNS();
         String topicARN = sns.createTopic("webhook:sms:" + phone).getTopicArn();
         sns.subscribe(topicARN, "sms", phone);
         return topicARN;
@@ -219,8 +219,8 @@ public class BoxAWSSNSLambda implements RequestStreamHandler {
      *            SNS ARN
      */
     private void webHookToTopic(String webHookId, String userId, String topicARN) {
-        Configuration configuration = services.getConfiguration();
-        AmazonDynamoDB dynamoDB = services.getAmazonDynamoDB();
+        Configuration configuration = this.services.getConfiguration();
+        AmazonDynamoDB dynamoDB = this.services.getAmazonDynamoDB();
         Map<String, AttributeValue> item = new HashMap<>();
         item.put("webHookId", new AttributeValue().withS(webHookId));
         item.put("userId", new AttributeValue().withS(userId));
@@ -255,9 +255,9 @@ public class BoxAWSSNSLambda implements RequestStreamHandler {
         ValidationUtils.notBlank(validation, "fileId", fileId);
         validation.validate();
 
-        Map<String, AttributeValue> webHook = getWebHook(webHookId);
+        Map<String, AttributeValue> webHook = this.getWebHook(webHookId);
         String message = message(webHook.get("userId").getS(), fileId);
-        publishSNS(webHook.get("topic").getS(), message);
+        this.publishSNS(webHook.get("topic").getS(), message);
     }
 
     /**
@@ -269,7 +269,7 @@ public class BoxAWSSNSLambda implements RequestStreamHandler {
      *            for publishing (payload)
      */
     private void publishSNS(String topicARN, String message) {
-        AmazonSNS sns = services.getAmazonSNS();
+        AmazonSNS sns = this.services.getAmazonSNS();
         sns.publish(topicARN, message);
     }
 
@@ -281,8 +281,8 @@ public class BoxAWSSNSLambda implements RequestStreamHandler {
      * @return resolved web hook
      */
     private Map<String, AttributeValue> getWebHook(String webHookId) {
-        Configuration configuration = services.getConfiguration();
-        AmazonDynamoDB dynamoDB = services.getAmazonDynamoDB();
+        Configuration configuration = this.services.getConfiguration();
+        AmazonDynamoDB dynamoDB = this.services.getAmazonDynamoDB();
         Map<String, AttributeValue> key = Collections.singletonMap("webHookId", new AttributeValue().withS(webHookId));
         return dynamoDB.getItem(configuration.getTableNameTopicByWebhook(), key).getItem();
     }
@@ -297,7 +297,7 @@ public class BoxAWSSNSLambda implements RequestStreamHandler {
      * @return created message
      */
     private String message(String userId, String fileId) {
-        BoxAPIConnection boxAPIConnection = services.getBoxAPIConnection(userId);
+        BoxAPIConnection boxAPIConnection = this.services.getBoxAPIConnection(userId);
         BoxFile file = new BoxFile(boxAPIConnection, fileId);
         Info fileInfo = file.getInfo();
         return new StringBuilder()

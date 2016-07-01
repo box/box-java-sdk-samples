@@ -69,11 +69,11 @@ public class LambdaUtils {
          */
         @Override
         public synchronized T get() {
-            if (!loaded) {
-                loaded = true;
-                value = factory.get();
+            if (!this.loaded) {
+                this.loaded = true;
+                this.value = this.factory.get();
             }
-            return value;
+            return this.value;
         }
 
     }

@@ -15,6 +15,7 @@ description = """
 """
 
 checkstyle {
+	toolVersion = '7.0'
 	configFile = file(root + '/common/checkstyle/checkstyle.xml')
 	configProperties = [ root : "${root}" ]
 }

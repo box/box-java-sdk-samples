@@ -51,32 +51,32 @@ public class Configuration {
         this.tableNameTopicByWebhook = properties.getProperty("dynamodb.table.topic_by_webhook");
 
         // box
-        boxClientId = properties.getProperty("box.clientId");
-        boxClientSecret = properties.getProperty("box.clientSecret");
-        boxPublicKeyId = properties.getProperty("box.publicKeyId");
-        boxPrivateKey = properties.getProperty("box.privateKey");
-        boxPrivateKeyPassword = properties.getProperty("box.privateKeyPassword");
+        this.boxClientId = properties.getProperty("box.clientId");
+        this.boxClientSecret = properties.getProperty("box.clientSecret");
+        this.boxPublicKeyId = properties.getProperty("box.publicKeyId");
+        this.boxPrivateKey = properties.getProperty("box.privateKey");
+        this.boxPrivateKeyPassword = properties.getProperty("box.privateKeyPassword");
     }
 
     /**
      * @return table name for Web Hook SNS ARN mapping.
      */
     public String getTableNameTopicByWebhook() {
-        return tableNameTopicByWebhook;
+        return this.tableNameTopicByWebhook;
     }
 
     /**
      * @return Box Application client ID.
      */
     public String getBoxClientId() {
-        return boxClientId;
+        return this.boxClientId;
     }
 
     /**
      * @return appropriate client secret to {@link #getBoxClientId()}
      */
     public String getBoxClientSecret() {
-        return boxClientSecret;
+        return this.boxClientSecret;
     }
 
     /**
@@ -84,7 +84,7 @@ public class Configuration {
      * @see #getBoxPrivateKey()
      */
     public String getBoxPublicKeyId() {
-        return boxPublicKeyId;
+        return this.boxPublicKeyId;
     }
 
     /**
@@ -92,14 +92,14 @@ public class Configuration {
      * @see #getBoxPrivateKeyPassword()
      */
     public String getBoxPrivateKey() {
-        return boxPrivateKey;
+        return this.boxPrivateKey;
     }
 
     /**
      * @return De-cryption password for a provided {@link #getBoxPrivateKey()}
      */
     public String getBoxPrivateKeyPassword() {
-        return boxPrivateKeyPassword;
+        return this.boxPrivateKeyPassword;
     }
 
 }

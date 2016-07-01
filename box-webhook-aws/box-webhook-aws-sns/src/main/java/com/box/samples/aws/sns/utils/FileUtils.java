@@ -1,9 +1,7 @@
 package com.box.samples.aws.sns.utils;
 
-import java.io.File;
-
 /**
- * {@link File} related utilities.
+ * {@link java.io.File} related utilities.
  *
  * @author Stanislav Dvorscak
  *

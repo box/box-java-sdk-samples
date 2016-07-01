@@ -62,14 +62,14 @@ public class Validation {
      * @return violations container
      */
     private List<JSONObject> violations(String path) {
-        return violationsByPath.computeIfAbsent(path, p -> new LinkedList<>());
+        return this.violationsByPath.computeIfAbsent(path, p -> new LinkedList<>());
     }
 
     /**
      * @return True if there is no violation.
      */
     public boolean isValid() {
-        return violationsByPath.isEmpty();
+        return this.violationsByPath.isEmpty();
     }
 
     /**
@@ -79,7 +79,7 @@ public class Validation {
      *             if {@link #isValid()} is false.
      */
     public void validate() {
-        if (!isValid()) {
+        if (!this.isValid()) {
             throw new ValidationException(this);
         }
     }
@@ -88,11 +88,11 @@ public class Validation {
      * @return Builds {@link JSONObject} for current state.
      */
     public JSONObject toJSON() {
-        if (isValid()) {
+        if (this.isValid()) {
             return null;
         }
         JSONObject result = new JSONObject();
-        violationsByPath.forEach((path, violation) -> result.put(path, violation));
+        this.violationsByPath.forEach((path, violation) -> result.put(path, violation));
         return result;
     }
 

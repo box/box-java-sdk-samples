@@ -65,7 +65,7 @@ public class Services {
      * @return resolves {@link Configuration}
      */
     public Configuration getConfiguration() {
-        return configurationProvider.get();
+        return this.configurationProvider.get();
     }
 
     /**
@@ -84,7 +84,7 @@ public class Services {
                 try {
                     propertiesStream.close();
                 } catch (IOException e) {
-                    logger.error("Can not close properties stream: ", e);
+                    this.logger.error("Can not close properties stream: ", e);
                 }
             }
         }
@@ -100,7 +100,7 @@ public class Services {
      * @return resolved {@link BoxAPIConnection}
      */
     public BoxAPIConnection getBoxAPIConnection(String userId) {
-        Configuration configuration = getConfiguration();
+        Configuration configuration = this.getConfiguration();
 
         JWTEncryptionPreferences preference = new JWTEncryptionPreferences();
         preference.setEncryptionAlgorithm(EncryptionAlgorithm.RSA_SHA_512);
@@ -109,7 +109,7 @@ public class Services {
         preference.setPrivateKeyPassword(configuration.getBoxPrivateKeyPassword());
 
         return BoxDeveloperEditionAPIConnection.getAppUserConnection(userId, configuration.getBoxClientId(),
-                configuration.getBoxClientSecret(), preference, boxAccessTokenCache.get());
+                configuration.getBoxClientSecret(), preference, this.boxAccessTokenCache.get());
     }
 
     /**
@@ -125,7 +125,7 @@ public class Services {
      * @return AWS SNS
      */
     public AmazonSNS getAmazonSNS() {
-        return snsProvider.get();
+        return this.snsProvider.get();
     }
 
     /**
@@ -141,7 +141,7 @@ public class Services {
      * @return AWS Dynamo DB.
      */
     public AmazonDynamoDB getAmazonDynamoDB() {
-        return dynamoDBProvider.get();
+        return this.dynamoDBProvider.get();
     }
 
 }
