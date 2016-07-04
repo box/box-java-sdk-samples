@@ -1,5 +1,9 @@
 package com.box.samples.aws.sns;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 /**
@@ -31,14 +35,19 @@ public class Configuration {
     private final String boxPublicKeyId;
 
     /**
-     * @see #getBoxPrivateKey()
+     * Property holding name of the private key file.
      */
-    private final String boxPrivateKey;
+    private final String boxPrivateKeyFile;
 
     /**
      * @see #getBoxPrivateKeyPassword()
      */
     private final String boxPrivateKeyPassword;
+
+    /**
+     * @see #getBoxPrivateKey()
+     */
+    private String boxPrivateKey;
 
     /**
      * Constructor.
@@ -54,7 +63,7 @@ public class Configuration {
         this.boxClientId = properties.getProperty("box.clientId");
         this.boxClientSecret = properties.getProperty("box.clientSecret");
         this.boxPublicKeyId = properties.getProperty("box.publicKeyId");
-        this.boxPrivateKey = properties.getProperty("box.privateKey");
+        this.boxPrivateKeyFile = properties.getProperty("box.privateKeyFile");
         this.boxPrivateKeyPassword = properties.getProperty("box.privateKeyPassword");
     }
 
@@ -90,8 +99,18 @@ public class Configuration {
     /**
      * @return Encrypted private key corresponding to {@link #getBoxPublicKeyId()}.
      * @see #getBoxPrivateKeyPassword()
+     * @throws Exception exception occurred while loading private key file
      */
     public String getBoxPrivateKey() {
+        if (this.boxPrivateKey == null) {
+            try {
+                this.boxPrivateKey = new String(Files.readAllBytes(
+                        Paths.get(getClass().getClassLoader().getResource(boxPrivateKeyFile).toURI())
+                ));
+            } catch (IOException | URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return this.boxPrivateKey;
     }
 
