@@ -1,19 +1,21 @@
 package com.box.sdk.webhookawssample;
 
-import com.box.sdk.BoxAPIConnection;
-import com.box.sdk.BoxFile;
-import com.box.sdk.webhookawssample.helpers.BoxHelper;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import com.box.sdk.BoxAPIConnection;
+import com.box.sdk.BoxFile;
+import com.box.sdk.webhookawssample.helpers.BoxHelper;
 
+/**
+ *
+ */
 public class DocDetailsServlet extends HttpServlet {
     // The following document types are supported by Box Preview
     // https://community.box.com/t5/Managing-Your-Content/What-file-types-are-supported-by-Box-s-Content-Preview/ta-p/327

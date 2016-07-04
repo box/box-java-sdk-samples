@@ -1,16 +1,19 @@
 package com.box.sdk.webhookawssample;
 
-import com.box.sdk.BoxAPIConnection;
-import com.box.sdk.BoxFile;
-import com.box.sdk.webhookawssample.helpers.BoxHelper;
-
+import java.io.IOException;
+import java.io.OutputStream;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStream;
 
+import com.box.sdk.BoxAPIConnection;
+import com.box.sdk.BoxFile;
+import com.box.sdk.webhookawssample.helpers.BoxHelper;
+
+/**
+ *
+ */
 public class ThumbnailServlet extends HttpServlet {
     private static final int MAX_RETRIES = 3;
     private static final int THMB_SIZE = 256;

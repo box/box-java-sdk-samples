@@ -1,13 +1,22 @@
 package com.box.sdk.webhookawssample.helpers;
 
 
-import com.box.sdk.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import com.box.sdk.BoxAPIConnection;
+import com.box.sdk.BoxAPIException;
+import com.box.sdk.BoxDeveloperEditionAPIConnection;
+import com.box.sdk.BoxFolder;
+import com.box.sdk.BoxUser;
+import com.box.sdk.CreateUserParams;
+import com.box.sdk.EncryptionAlgorithm;
+import com.box.sdk.IAccessTokenCache;
+import com.box.sdk.InMemoryLRUAccessTokenCache;
+import com.box.sdk.JWTEncryptionPreferences;
 
 /**
  * BoxHelper.  A Helper class for managing Box App User's/

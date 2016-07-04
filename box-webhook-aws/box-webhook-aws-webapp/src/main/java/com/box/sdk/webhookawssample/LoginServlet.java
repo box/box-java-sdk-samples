@@ -1,17 +1,17 @@
 package com.box.sdk.webhookawssample;
 
-import com.box.sdk.BoxAPIConnection;
-import com.box.sdk.webhookawssample.helpers.BoxHelper;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.box.sdk.BoxAPIConnection;
+import com.box.sdk.webhookawssample.helpers.BoxHelper;
 
 /**
  *
@@ -52,7 +52,7 @@ public class LoginServlet extends HttpServlet {
         int maxIdle = request.getSession().getMaxInactiveInterval();
         log(" Max idle time for session: " + maxIdle);
         // set session timeout to two hours.
-        request.getSession().setMaxInactiveInterval(120*60);
+        request.getSession().setMaxInactiveInterval(120 * 60);
         //    reset user name and id here.
         BoxHelper.setBoxAppUserId(request, null);
         BoxHelper.setBoxAppUserName(request, null);
