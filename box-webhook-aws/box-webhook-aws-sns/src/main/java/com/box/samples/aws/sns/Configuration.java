@@ -1,9 +1,8 @@
 package com.box.samples.aws.sns;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStreamReader;
 import java.util.Properties;
 
 /**
@@ -103,11 +102,18 @@ public class Configuration {
      */
     public String getBoxPrivateKey() {
         if (this.boxPrivateKey == null) {
-            try {
-                this.boxPrivateKey = new String(Files.readAllBytes(
-                        Paths.get(getClass().getClassLoader().getResource(boxPrivateKeyFile).toURI())
-                ));
-            } catch (IOException | URISyntaxException e) {
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    getClass().getClassLoader().getResourceAsStream(boxPrivateKeyFile)
+            ))) {
+                final StringBuilder fileContent = new StringBuilder();
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    fileContent.append(line).append('\n');
+                }
+                this.boxPrivateKey = fileContent.toString();
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
