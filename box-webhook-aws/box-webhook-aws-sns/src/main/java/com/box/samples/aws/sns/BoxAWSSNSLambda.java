@@ -20,6 +20,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.amazonaws.services.sns.AmazonSNS;
+import com.box.samples.aws.sns.logging.LambdaLoggerSlf4j;
 import com.box.samples.aws.sns.utils.FileUtils;
 import com.box.samples.aws.sns.utils.StringUtils;
 import com.box.samples.aws.sns.utils.ValidationUtils;
@@ -58,6 +59,8 @@ public class BoxAWSSNSLambda implements RequestStreamHandler {
      */
     @Override
     public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
+        LambdaLoggerSlf4j.setContext(context);
+
         try {
             JSONObject response;
 
@@ -302,12 +305,12 @@ public class BoxAWSSNSLambda implements RequestStreamHandler {
         Info fileInfo = file.getInfo();
         return new StringBuilder()
             .append("File: ")
-            .append(fileInfo.getName())
-            .append('\n')
-            .append("Size: ")
-            .append(FileUtils.humanReadableSize(fileInfo.getSize()))
-            .append('\n')
-            .toString();
+                                  .append(fileInfo.getName())
+                                  .append('\n')
+                                  .append("Size: ")
+                                  .append(FileUtils.humanReadableSize(fileInfo.getSize()))
+                                  .append('\n')
+                                  .toString();
     }
 
 }
