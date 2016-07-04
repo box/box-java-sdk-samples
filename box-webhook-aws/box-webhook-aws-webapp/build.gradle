@@ -1,12 +1,48 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+def root = file('../..').absolutePath
+
+apply plugin: 'checkstyle'
 apply plugin: 'java'
-apply plugin: 'maven'
 apply plugin: 'war'
 
-group = 'com.box'
+group = 'com.box.samples.awswebhook.webapp'
 archivesBaseName = 'box-webhook-webapp'
-version = '0.1-SNAPSHOT'
+version = '0.1.0-SNAPSHOT'
+
+description = """
+    Box: WebHook AWS WebApp
+"""
+
+checkstyle {
+    toolVersion = '7.0'
+    configFile = file(root + '/common/checkstyle/checkstyle.xml')
+    configProperties = [ root : "${root}" ]
+}
+
+checkstyleMain { classpath += configurations.compile }
+checkstyleTest { classpath += configurations.compile }
+
+sourceCompatibility = 1.8
+targetCompatibility = sourceCompatibility
+
 repositories {
     mavenCentral()
+    mavenLocal()
+}
+
+processResources {
+    from('src/main/resources') {
+        include 'config.properties'
+        filter (ReplaceTokens, tokens: [
+                "box.clientId" : project.property("box.clientId"),
+                "box.clientSecret" : project.property("box.clientSecret"),
+                "box.enterpriseId" : project.property("box.enterpriseId"),
+                "box.publicKeyId" : project.property("box.publicKeyId"),
+                "box.privateKeyFile" : project.property("box.privateKeyFile"),
+                "box.privateKeyPassword" : project.property("box.privateKeyPassword")
+        ])
+    }
 }
 
 dependencies {

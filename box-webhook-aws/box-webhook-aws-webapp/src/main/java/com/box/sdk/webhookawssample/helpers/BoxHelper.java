@@ -42,7 +42,7 @@ public final class BoxHelper {
     static {
         String privateKey;
         try {
-            privateKey = new String(Files.readAllBytes(Paths.get(BoxHelper.class.getResource(PRIVATE_KEY_FILE).toURI())));
+            privateKey = new String(Files.readAllBytes(Paths.get(BoxHelper.class.getResource('/' + PRIVATE_KEY_FILE).toURI())));
         } catch (Exception ex) {
             throw new BoxAPIException("Unable to read private key file: " + PRIVATE_KEY_FILE);
         }

@@ -1,0 +1,3 @@
+rootProject.name = "box-webhook-aws"
+
+include 'box-webhook-aws-sns', 'box-webhook-aws-webapp'

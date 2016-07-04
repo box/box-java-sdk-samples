@@ -1,0 +1,50 @@
+apply plugin: 'base'
+apply plugin: 'java'
+
+group = 'com.box.samples.awswebhook'
+version = '0.1.0-SNAPSHOT'
+
+description = """
+    Box: WebHook AWS Sample
+"""
+
+repositories {
+    mavenCentral()
+}
+
+subprojects {
+    task copyPrivateKey(type: Copy) {
+        from rootProject.file('config')
+        into "$buildDir/resources/main"
+        include project.property("box.privateKeyFile")
+    }
+
+    processResources.dependsOn copyPrivateKey
+}
+
+task copyWebAppWar(type: Copy) {
+    from project(':box-webhook-aws-webapp').collect { it.tasks.withType(War) }
+    into "$buildDir/aws-setup"
+    rename '.+', 'box-webhook-aws-webapp.war'
+}
+
+task copySnsZip(type: Copy) {
+    from project(':box-webhook-aws-sns').collect { it.tasks.withType(Zip) }
+    into "$buildDir/aws-setup"
+    include '**/*.zip'
+    rename { String fileName ->
+        if(fileName.endsWith('.zip')) {
+            fileName.replace(fileName, 'box-webhook-aws-sns.zip')
+        }
+    }
+}
+
+task copyConfigFiles(type: Copy) {
+    from "config"
+    into "$buildDir/aws-setup"
+    exclude project.property("box.privateKeyFile")
+}
+
+build.dependsOn copyWebAppWar
+build.dependsOn copySnsZip
+build.dependsOn copyConfigFiles

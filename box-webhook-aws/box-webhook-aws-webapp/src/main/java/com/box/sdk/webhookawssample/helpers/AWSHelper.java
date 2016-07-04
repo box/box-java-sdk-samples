@@ -8,7 +8,7 @@ import java.text.MessageFormat;
  * @author Vladimir Hrusovsky
  */
 public final class AWSHelper {
-    private static final String API_GATEWAY_URL = ConfigHelper.properties().getProperty("awsAPIGatewayURL");
+    private static final String API_GATEWAY_URL = System.getProperty("awsAPIGatewayURL");
     private static final String API_GATEWAY_REGISTER_WEBHOOK_EMAIL_TRIGGER_URL = API_GATEWAY_URL + "/sns/email";
     private static final String API_GATEWAY_INVOKE_WEBHOOK_EMAIL_TRIGGER_URL = API_GATEWAY_URL + "/sns/box/preview/{0}";
 

@@ -1,6 +1,6 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
-def root = '../..'
+def root = file('../..').absolutePath
 
 apply plugin: 'checkstyle'
 apply plugin: 'java'
@@ -37,7 +37,7 @@ processResources {
             "box.clientId" : project.property("box.clientId"),
             "box.clientSecret" : project.property("box.clientSecret"),
             "box.publicKeyId" : project.property("box.publicKeyId"),
-            "box.privateKey" : project.property("box.privateKey"),
+            "box.privateKeyFile" : project.property("box.privateKeyFile"),
             "box.privateKeyPassword" : project.property("box.privateKeyPassword")
         ])
     }

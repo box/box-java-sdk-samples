@@ -30,7 +30,7 @@ public final class ConfigHelper {
             if (properties == null) {
                 Properties prop = new Properties();
                 try {
-                    InputStream input = ConfigHelper.class.getResourceAsStream("/dsm-config.properties");
+                    InputStream input = ConfigHelper.class.getResourceAsStream("/config.properties");
                     prop.load(input);
                     input.close();
                 } catch (FileNotFoundException e) {
