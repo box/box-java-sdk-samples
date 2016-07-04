@@ -27,7 +27,8 @@ sourceCompatibility = 1.8
 targetCompatibility = sourceCompatibility
 
 repositories {
-     maven { url "http://repo.maven.apache.org/maven2" }
+    mavenLocal()
+    maven { url "http://repo.maven.apache.org/maven2" }
 }
 
 processResources {
@@ -37,10 +38,12 @@ processResources {
             "box.clientId" : project.property("box.clientId"),
             "box.clientSecret" : project.property("box.clientSecret"),
             "box.publicKeyId" : project.property("box.publicKeyId"),
-            "box.privateKeyFile" : project.property("box.privateKeyFile"),
+            "box.privateKeyFile" : 'box.pem',
             "box.privateKeyPassword" : project.property("box.privateKeyPassword")
         ])
     }
+
+    from(project.property('box.privateKeyFile'))
 }
 
 dependencies {
@@ -49,7 +52,7 @@ dependencies {
     compile group: 'com.amazonaws', name: 'aws-lambda-java-core', version:'1.1.0'
     compile group: 'com.amazonaws', name: 'aws-java-sdk-dynamodb', version:'1.11.2'
     compile group: 'com.amazonaws', name: 'aws-java-sdk-sns', version:'1.11.2'
-    compile group: 'com.box', name: 'box-java-sdk', version:'2.1.1'
+    compile group: 'com.box', name: 'box-java-sdk', version:'2.2.1-SNAPSHOT'
 }
 
 task buildLambda(type: Zip) {

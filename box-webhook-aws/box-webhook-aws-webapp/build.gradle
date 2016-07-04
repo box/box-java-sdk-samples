@@ -5,6 +5,7 @@ def root = file('../..').absolutePath
 apply plugin: 'checkstyle'
 apply plugin: 'java'
 apply plugin: 'war'
+apply plugin: 'eclipse'
 
 group = 'com.box.samples.awswebhook.webapp'
 archivesBaseName = 'box-webhook-webapp'
@@ -39,9 +40,11 @@ processResources {
                 "box.clientSecret" : project.property("box.clientSecret"),
                 "box.enterpriseId" : project.property("box.enterpriseId"),
                 "box.publicKeyId" : project.property("box.publicKeyId"),
-                "box.privateKeyFile" : project.property("box.privateKeyFile"),
+                "box.privateKeyFile" : 'box.pem',
                 "box.privateKeyPassword" : project.property("box.privateKeyPassword")
         ])
+        
+        from(project.property('box.privateKeyFile'))
     }
 }
 

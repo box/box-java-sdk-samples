@@ -2,11 +2,16 @@
   "AWSTemplateFormatVersion": "2010-09-09",
 
   "Parameters": {
-    "ProjectS3Bucket": {
+      "ParameterProjectS3Bucket": {
       "Description": "Project S3 (Bucket)",
       "Type": "String",
-      "Default": "box-webhook-aws-config"
-    }
+          "Default": "@box.samples.sns.cloudformation.s3.bucket@"
+	  },
+      "ParameterProjectS3Key": {
+          "Description": "Project S3 (URI)",
+          "Type": "String",
+          "Default": "@box.samples.sns.cloudformation.s3.key@"
+      }
   },
 
   "Outputs": {
@@ -158,15 +163,13 @@
         }]
       }
     },
-    "EC2InstanceProfile": {
-      "Type": "AWS::IAM::InstanceProfile",
-      "Properties": {
-        "Path": "/",
-        "Roles": [
-          { "Ref": "EC2InstanceRole" }
-        ]
-      }
-    },
+	"EC2InstanceProfile": {
+		"Type": "AWS::IAM::InstanceProfile",
+		"Properties": {
+		"Path": "/",
+		"Roles": [ { "Ref": "EC2InstanceRole" } ]
+		}
+	},
     "SNSTableFileIDMapping": {
       "Type": "AWS::DynamoDB::Table",
       "Properties": {
@@ -189,8 +192,8 @@
         "FunctionName": "box-sns",
         "Description": "SNS Lambda",
         "Code": {
-          "S3Bucket": { "Ref": "ProjectS3Bucket" },
-          "S3Key": "box-webhook-aws-sns.zip"
+			"S3Bucket": { "Ref": "ParameterProjectS3Bucket" },
+			"S3Key": { "Fn::Join" : [ "/" , [ { "Ref": "ParameterProjectS3Key" }, "box-webhook-aws-sns.zip"] ] }
         },
         "Handler": "com.box.samples.aws.sns.BoxAWSSNSLambda",
         "MemorySize": 512,
@@ -345,8 +348,8 @@
         },
         "Description": "AWS Elastic Beanstalk Application for Webhook Sample Web Application Version",
         "SourceBundle": {
-          "S3Bucket": { "Ref": "ProjectS3Bucket" },
-          "S3Key": "box-webhook-aws-webapp.war"
+			"S3Bucket": { "Ref": "ParameterProjectS3Bucket" },
+			"S3Key": { "Fn::Join" : [ "/" , [ { "Ref": "ParameterProjectS3Key" }, "box-webhook-aws-webapp.war"] ] }
         }
       }
     },
