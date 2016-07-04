@@ -59,10 +59,11 @@ public class ResponseBuilder {
     }
 
     /**
+     * @param message message of error
      * @return Builds 'error' response.
      */
-    public static JSONObject error() {
-        return new JSONObject().put("status", "error");
+    public static JSONObject error(String message) {
+        return new JSONObject().put("status", "error").put("message", message);
     }
 
 }

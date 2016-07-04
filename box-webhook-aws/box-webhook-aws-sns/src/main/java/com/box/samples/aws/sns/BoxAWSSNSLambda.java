@@ -68,7 +68,7 @@ public class BoxAWSSNSLambda implements RequestStreamHandler {
                 response = ResponseBuilder.badRequest(e.getValidation());
             } catch (Exception e) {
                 this.logger.error("Invocation failed: ", e);
-                response = ResponseBuilder.error();
+                response = ResponseBuilder.error(e.getMessage());
             }
 
             OutputStreamWriter writer = new OutputStreamWriter(output, StringUtils.UTF_8);
