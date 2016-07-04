@@ -25,22 +25,15 @@ It asks for passwords but ignores them.
 
 ###  Create a Box Application that supports App Users
 
-You will need to create an application that supports app users and describe it in a configuration file `box-webhook-aws-webapp/src/main/resources/dms-config.properties` like the following:
-```sh
-boxClientId=<YOUR_BOX_CLIENT_ID>
-boxClientSecret=<YOUR_BOX_CLIENT_SECRET>
-boxEnterpriseId=<YOUR_BOX_ENTERPRISE_ID>
-boxPrivateKeyFile=<YOUR_JWT_PRIVATE_KEY_FILENAME>
-boxPrivateKeyPassword=<YOUR_JWT_PRIVATE_KEY_PASSWORD>
-boxPublicKeyId=<YOUR_JWT_PUBLIC_KEY_ID>
-```
-These steps are described [here](https://docs.box.com/docs/configuring-box-platform).
+You will need to create an application that supports App Users. Steps are described [here](https://docs.box.com/docs/configuring-box-platform). 
 
-_Note:_
-`<YOUR_JWT_PRIVATE_KEY_FILENAME>` must be located in `box-webhook-aws-webapp/src/main/resources/` directory.
+During the process you have created private key. This key is needed by the Box SDK to authenticate yourself and your App Users. 
+Copy your private key file into `config` directory of the sample root.
 
-### Preparing AWS Environment
-For Amazon Web Services we are going to use the following services:
+###  Setup AWS Environment
+
+As for Amazon Web Services we are going to use the following services:
+
 * **DynamoDB**
   * non-relational database for storing mapping between user files and notification emails
   * more information can be found [here](https://aws.amazon.com/dynamodb/)
@@ -61,25 +54,59 @@ For Amazon Web Services we are going to use the following services:
   * gives an easy way to create and manage a collection of related AWS resources
   * service used to prepare our Sample AWS Environment
 
-#### Preparing CloudFormation Package
+#### 1. Connect your Box Application with the Sample Application
 
-In order to build package used to prepare AWS environment, we will build ZIP file which will be then used as environemnt configuration for CloudFormation.
-To build the package run:
+In order for the sample application to work with your Box Application you have created in previous steps, you will need to fill the following values.
+Rename `gradle.properties.template` file in sample root to `gradle.properties` and replace placeholders with values for your application and enterprise account.
+
+```
+{boxEnterpriseId}         enterprise ID of your Box account
+{boxClientId}             client ID of the Box Application
+{boxClientSecret}         client secret of the Box Application
+{boxPublicKeyId}          ID of your public key in the Box Application
+{boxPrivateKeyPassword}   password for your private key
+{boxPrivateKeyFile}       file name of your private key file you have copied into `config` directory
+```
+You are now ready to build your packages.
+
+#### 2. Preparing Application Packages for AWS
+
+In order to get packages we need to configure AWS environment use Gradle build task in root directory of the sample application:
+
 ```sh
-gradle cloudformation
+gradle build
 ```
 
-The build process will build WAR file for our Web Application to be deployed on Elastic Beanstalk, ZIP files for Lambda functions as well as CloudFormation configuration for roles, API Gateway to be glued together.
-Files will be contained in `` CloudFormation Package file.
+The build process will build WAR file for our Web Application to be deployed on Elastic Beanstalk, ZIP file for Lambda function and also CloudFormation configuration file.
+Files can be found in `build/aws-setup` directory.
 
-#### Deploying CloudFormation Package
-TODO
+#### 3. Uploading packages to S3
+
+ We are now ready to setup AWS environment. We will do so by using CloudFormation. To make our packages accessible to CloudFormation, we will upload them to S3 bucket.
+
+ 1. Go to [S3 Console](https://console.aws.amazon.com/s3) and Create New Bucket
+ 2. Choose name for your bucket (e.g. `box-webhook-aws-config`), region and click on Create
+ 3. In your bucket, use Upload action and pick package files of the sample project to upload into bucket - `box-webhook-aws-sns.zip` and `box-webhook-aws-webapp.war` from `build/aws-setup`
+ 4. Wait until the files are upload before proceeding to next step
+
+#### 4. Creating CloudFormation Stack
+
+ 1. Go to [CloudFormation Console](https://console.aws.amazon.com/cloudformation) and Create New Stack
+ 2. Use Choose File in Choose a template section and select `build/aws-setup/cloudformation.json`
+ 3. On the Next page (Specify Details) fill out Stack name (e.g. `box-webhook-aws-stack`) and S3 Bucket name, where you uploaded the packages
+ 4. On the Next page (Options) just click on Next
+ 5. On the Review page you have to accept Capabilities at the bottom of the page:
+    _'I acknowledge that this template might cause AWS CloudFormation to create IAM resources.'_
+ 6. Click on Create and give it some time to prepare the environment (you can watch progress in 'Events' tab)
+ 7. After everything is finished switch to 'Outputs' tab of the stack, where 'URL of the Web Application' can be found
 
 ### Example in Action
-After the setup above everything should be ready to test the example. 
- 1. Go to your Elastic Beanstalk Application URL, which will start your Web Application
- 2. Login as your AppUser
- 3. Open any of your files, which supports Preview
+ 
+ After the setup above everything should be ready to test the example.
+
+ 1. Go to your 'URL of the Web Application', which will start your Sample Web Application
+ 2. Login as your AppUser (or create a new one)
+ 3. Open any of your files, which supports Preview (or upload a new one)
  4. Now you can fill out Email Address for notification and confirm it by OK
  5. If everything is set up properly you should get Subscription Confirmation Email from AWS Notifications, which you must Confirm (using the link in email)
  6. Preview the file to test the functionality
