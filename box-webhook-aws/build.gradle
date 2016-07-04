@@ -45,6 +45,4 @@ task copyConfigFiles(type: Copy) {
     exclude project.property("box.privateKeyFile")
 }
 
-build.dependsOn copyWebAppWar
-build.dependsOn copySnsZip
-build.dependsOn copyConfigFiles
+build.dependsOn copyWebAppWar, copySnsZip, copyConfigFiles
