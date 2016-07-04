@@ -15,7 +15,6 @@ It asks for passwords but ignores them.
 You will need to create an application that supports App Users. Steps are described [here](https://docs.box.com/docs/configuring-box-platform). 
 
 During the process you have created private key. This key is needed by the Box SDK to authenticate yourself and your App Users. 
-Copy your private key file into `config` directory of the sample root.
 
 ###  Setup AWS Environment
 
@@ -52,7 +51,7 @@ Rename `gradle.properties.template` file in sample root to `gradle.properties` a
 {boxClientSecret}         client secret of the Box Application
 {boxPublicKeyId}          ID of your public key in the Box Application
 {boxPrivateKeyPassword}   password for your private key
-{boxPrivateKeyFile}       file name of your private key file you have copied into `config` directory
+{boxPrivateKeyFile}       absolute path of your private key file
 ```
 You are now ready to build your packages.
 
@@ -71,7 +70,7 @@ gradlew.bat clean build
 ```
 
 The build process will build WAR file for our Web Application to be deployed on Elastic Beanstalk, ZIP file for Lambda function and also CloudFormation configuration file.
-Files can be found in `build/aws-setup` directory.
+Files can be found in `build/distributions/aws-s3` directory.
 
 #### 3. Uploading packages to S3
 
@@ -79,13 +78,13 @@ Files can be found in `build/aws-setup` directory.
 
  1. Go to [S3 Console](https://console.aws.amazon.com/s3) and Create New Bucket
  2. Choose name for your bucket (e.g. `box-webhook-aws-config`), region and click on Create
- 3. In your bucket, use Upload action and pick package files of the sample project to upload into bucket - `box-webhook-aws-sns.zip` and `box-webhook-aws-webapp.war` from `build/aws-setup`
+ 3. In your bucket, use Upload action and pick package files of the sample project to upload into bucket - `box-webhook-aws-sns.zip` and `box-webhook-aws-webapp.war` from `build/distributions/aws-s3`
  4. Wait until the files are upload before proceeding to next step
 
 #### 4. Creating CloudFormation Stack
 
  1. Go to [CloudFormation Console](https://console.aws.amazon.com/cloudformation) and Create New Stack
- 2. Use Choose File in Choose a template section and select `build/aws-setup/cloudformation.json`
+ 2. Use Choose File in Choose a template section and select `build/distributions/aws-s3/cloudformation.json`
  3. On the Next page (Specify Details) fill out Stack name (e.g. `box-webhook-aws-stack`) and S3 Bucket name, where you uploaded the packages
  4. On the Next page (Options) just click on Next
  5. On the Review page you have to accept Capabilities at the bottom of the page:
