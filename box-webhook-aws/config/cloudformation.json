@@ -194,6 +194,7 @@
         },
         "Handler": "com.box.samples.aws.sns.BoxAWSSNSLambda",
         "MemorySize": 512,
+        "Timeout": 15,
         "Role": { "Fn::GetAtt" : [ "AWSLambdaRole", "Arn"] },
         "Runtime": "java8"
       },
@@ -367,7 +368,7 @@
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "awsAPIGatewayURL",
-            "Value": { "Fn::Join": [ "", [ "https://", { "Fn::GetAtt": [ "SNSAPIGatewayApi", "RootResourceId" ] }, ".execute-api.", { "Ref": "AWS::Region" }, ".amazonaws.com/latest" ]  ] }
+            "Value": { "Fn::Join": [ "", [ "https://", { "Ref": "SNSAPIGatewayApi" }, ".execute-api.", { "Ref": "AWS::Region" }, ".amazonaws.com/latest" ]  ] }
           },
           {
             "Namespace": "aws:autoscaling:launchconfiguration",
