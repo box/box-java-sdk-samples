@@ -27,6 +27,7 @@ task copyWebAppWar(type: Copy) {
     into "$buildDir/aws-setup"
     rename '.+', 'box-webhook-aws-webapp.war'
 }
+copyWebAppWar.dependsOn ':box-webhook-aws-webapp:build'
 
 task copySnsZip(type: Copy) {
     from project(':box-webhook-aws-sns').tasks.withType(Zip)
@@ -38,6 +39,7 @@ task copySnsZip(type: Copy) {
         }
     }
 }
+copySnsZip.dependsOn ':box-webhook-aws-sns:build'
 
 task copyConfigFiles(type: Copy) {
     from 'config'
@@ -45,4 +47,5 @@ task copyConfigFiles(type: Copy) {
     exclude project.property('box.privateKeyFile')
 }
 
+build.dependsOn ':box-webhook-aws-webapp:build', ':box-webhook-aws-sns:build'
 build.dependsOn copyWebAppWar, copySnsZip, copyConfigFiles
