@@ -43,9 +43,8 @@ processResources {
                 "box.privateKeyFile" : 'box.pem',
                 "box.privateKeyPassword" : project.property("box.privateKeyPassword")
         ])
-        
-        from(project.property('box.privateKeyFile'))
     }
+    from(project.property('box.privateKeyFile'))
 }
 
 dependencies {
