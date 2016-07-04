@@ -35,8 +35,8 @@ task buildAWS {
 		    from('config') {
 		        include 'cloudformation.json'
 		        filter (ReplaceTokens, tokens: [
-		            "box.samples.sns.cloudformation.s3.bucket" : project.property("box.samples.sns.cloudformation.s3.bucket"),
-		            "box.samples.sns.cloudformation.s3.key" : project.property("box.samples.sns.cloudformation.s3.key"),
+		            'box.samples.sns.cloudformation.s3.bucket' : project.hasProperty('box.samples.sns.cloudformation.s3.bucket') ? project.property('box.samples.sns.cloudformation.s3.bucket') : 'box-webhook-aws-config',
+		            'box.samples.sns.cloudformation.s3.key' : project.hasProperty('box.samples.sns.cloudformation.s3.key') ? project.property('box.samples.sns.cloudformation.s3.key') : '',
 		        ])
 		    }
 		    into "$distsDir/aws-s3"
