@@ -27,6 +27,7 @@ import com.box.samples.aws.sns.utils.ValidationUtils;
 import com.box.samples.aws.sns.validation.Validation;
 import com.box.samples.aws.sns.validation.ValidationException;
 import com.box.sdk.BoxAPIConnection;
+import com.box.sdk.BoxAPIException;
 import com.box.sdk.BoxFile;
 import com.box.sdk.BoxFile.Info;
 
@@ -69,6 +70,9 @@ public class BoxAWSSNSLambda implements RequestStreamHandler {
                 response = this.handle(request);
             } catch (ValidationException e) {
                 response = ResponseBuilder.badRequest(e.getValidation());
+            } catch (BoxAPIException e) {
+                this.logger.error("Invocation failed " + e.getResponseCode() + ":" + e.getResponse(), e);
+                response = ResponseBuilder.error(e.getMessage());
             } catch (Exception e) {
                 this.logger.error("Invocation failed: ", e);
                 response = ResponseBuilder.error(e.getMessage());
