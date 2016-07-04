@@ -1,1 +1,2 @@
 !box-webhook-aws-sns/src/main/resources/box-samples-aws-sns.properties
+!gradle/**/*

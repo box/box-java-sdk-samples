@@ -2,21 +2,8 @@
 
 ### Prerequisites
 
-In order to package this example you will need to have Gradle installed.
-
-On a Mac, you can install Gradle with [brew](http://brew.sh/):
-```sh
-brew install gradle
-```
-
-For other platforms see information on Gradle website [here](https://docs.gradle.org/current/userguide/installation.html) . 
-
-Check that your Gradle is installed correctly with:
-```sh
-gradle -v
-```
-
-You will need to have Amazon Web Services account created to use this example. To create new account visit [here](https://console.aws.amazon.com/console/home).
+You will need to have Amazon Web Services account created to use this example. 
+To create new account visit [here](https://console.aws.amazon.com/console/home).
 
 ###  This is a sample Application and Not Production Code
 
@@ -73,8 +60,14 @@ You are now ready to build your packages.
 
 In order to get packages we need to configure AWS environment use Gradle build task in root directory of the sample application:
 
+For Mac/Linux:
 ```sh
-gradle build
+./gradlew clean build
+```
+
+For Windows:
+```cmd
+gradlew.bat clean build
 ```
 
 The build process will build WAR file for our Web Application to be deployed on Elastic Beanstalk, ZIP file for Lambda function and also CloudFormation configuration file.
