@@ -40,11 +40,12 @@ processResources {
                 "box.clientSecret" : project.property("box.clientSecret"),
                 "box.enterpriseId" : project.property("box.enterpriseId"),
                 "box.publicKeyId" : project.property("box.publicKeyId"),
-                "box.privateKeyFile" : 'box.pem',
                 "box.privateKeyPassword" : project.property("box.privateKeyPassword")
         ])
     }
-    from(project.property('box.privateKeyFile'))
+    from(project.property('box.privateKeyFile')) {
+        rename '.*', 'private_key.pem'
+    }
 }
 
 dependencies {

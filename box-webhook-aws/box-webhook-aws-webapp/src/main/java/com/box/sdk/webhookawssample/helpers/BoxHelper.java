@@ -29,7 +29,6 @@ public final class BoxHelper {
     static final String ENTERPRISE_ID = ConfigHelper.properties().getProperty("boxEnterpriseId");
     static final String CLIENT_ID = ConfigHelper.properties().getProperty("boxClientId");
     static final String CLIENT_SECRET = ConfigHelper.properties().getProperty("boxClientSecret");
-    static final String PRIVATE_KEY_FILE = ConfigHelper.properties().getProperty("boxPrivateKeyFile");
     static final String PRIVATE_KEY_PASSWORD = ConfigHelper.properties().getProperty("boxPrivateKeyPassword");
     static final String PUBLIC_KEY_ID = ConfigHelper.properties().getProperty("boxPublicKeyId");
 
@@ -51,9 +50,11 @@ public final class BoxHelper {
     static {
         String privateKey;
         try {
-            privateKey = new String(Files.readAllBytes(Paths.get(BoxHelper.class.getClassLoader().getResource(PRIVATE_KEY_FILE).toURI())));
+            privateKey = new String(Files.readAllBytes(
+                    Paths.get(BoxHelper.class.getClassLoader().getResource("private_key.pem").toURI())
+            ));
         } catch (Exception ex) {
-            throw new BoxAPIException("Unable to read private key file: " + PRIVATE_KEY_FILE);
+            throw new BoxAPIException("Unable to read private key file.");
         }
 
         jwtEncryptionPreferences = new JWTEncryptionPreferences();

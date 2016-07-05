@@ -104,7 +104,7 @@ public class Configuration {
         if (this.boxPrivateKey == null) {
 
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    getClass().getClassLoader().getResourceAsStream(boxPrivateKeyFile)
+                    getClass().getClassLoader().getResourceAsStream("private_key.pem")
             ))) {
                 final StringBuilder fileContent = new StringBuilder();
                 String line;
