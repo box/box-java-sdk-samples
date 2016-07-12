@@ -18,7 +18,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
-import com.box.sdk.BoxDeveloperEditionAPIConnection;
+import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxFile;
 import com.box.sdk.BoxWebHook;
 import com.box.sdk.webhookawssample.helpers.AWSHelper;
@@ -105,7 +105,7 @@ public class NotifyOnPreviewServlet extends HttpServlet {
     }
 
     /**
-     * Creates Box Webhook for 'Preview File' action, which triggers our AWS API Gateway resource.
+     * Creates/updates Box Webhook for 'Preview File' action, which triggers our AWS API Gateway resource.
      *
      * @param userId           id of user
      * @param webhookTriggerId id of trigger registered on AWS
@@ -113,10 +113,41 @@ public class NotifyOnPreviewServlet extends HttpServlet {
     private void createPreviewFileWebhook(String userId, String fileId, String webhookTriggerId)
             throws MalformedURLException {
 
-        final BoxDeveloperEditionAPIConnection boxConnection = BoxHelper.userClient(userId);
+        final BoxAPIConnection boxConnection = BoxHelper.userClient(userId);
         final BoxFile file = new BoxFile(boxConnection, fileId);
+        final URL webhookURL = createWebhookURL(webhookTriggerId);
+        final BoxWebHook fileWebhook = findFileWebHook(boxConnection, file);
 
-        file.addWebHook(createWebhookURL(webhookTriggerId), BoxWebHook.Trigger.FILE_PREVIEWED);
+        if (fileWebhook != null) {
+            final BoxWebHook.Info updatedInfo = fileWebhook.new Info();
+            updatedInfo.setAddress(webhookURL);
+            updatedInfo.setTriggers(BoxWebHook.Trigger.FILE_PREVIEWED);
+
+            fileWebhook.updateInfo(updatedInfo);
+        } else {
+            BoxWebHook.create(file, webhookURL, BoxWebHook.Trigger.FILE_PREVIEWED);
+        }
+    }
+
+
+    /**
+     * Finds existing Webhook for given file.
+     *
+     * @param boxConnection connection
+     * @param file          file to find a Webhook for
+     * @return Webhook for given file or null, if there is no Webhook for the file
+     */
+    private BoxWebHook findFileWebHook(BoxAPIConnection boxConnection, BoxFile file) {
+        final Iterable<BoxWebHook.Info> all = BoxWebHook.all(boxConnection);
+
+        for (BoxWebHook.Info webhookInfo : all) {
+            if (webhookInfo.getTarget() != null && webhookInfo.getTarget().getType() == BoxWebHook.TargetType.FILE
+                    && webhookInfo.getTarget().getId().equals(file.getID())) {
+                return webhookInfo.getResource();
+            }
+        }
+
+        return null;
     }
 
     private URL createWebhookURL(String webhookTriggerId) throws MalformedURLException {
