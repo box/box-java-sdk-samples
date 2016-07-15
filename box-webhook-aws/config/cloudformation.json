@@ -318,7 +318,7 @@
           "Type": "AWS",
           "Credentials": { "Fn::GetAtt": [ "APIGatewayLambdaRole", "Arn" ] },
           "Uri": { "Fn::Join": [ "", [ "arn:aws:apigateway:", { "Ref": "AWS::Region" }, ":lambda:path/2015-03-31/functions/", { "Fn::GetAtt": [ "SNSLambda", "Arn" ] }, "/invocations" ] ] },
-          "RequestTemplates": { "application/json": "{\n  \"command\": \"/box/preview\",\n  \"webHookId\": \"$input.params('webHookId')\",\n  \"fileId\" : $input.json('fileId')\n}" },
+          "RequestTemplates": { "application/json": "{\n  \"command\": \"/box/preview\",\n  \"webHookId\": \"$input.params('webHookId')\",\n  \"fileId\" : $input.json('source.id')\n}" },
           "IntegrationHttpMethod": "POST",
           "IntegrationResponses": [ { "StatusCode": "200" } ]
         },
