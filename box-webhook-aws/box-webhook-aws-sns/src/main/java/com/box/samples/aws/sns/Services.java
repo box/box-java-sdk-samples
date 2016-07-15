@@ -103,7 +103,7 @@ public class Services {
         Configuration configuration = this.getConfiguration();
 
         JWTEncryptionPreferences preference = new JWTEncryptionPreferences();
-        preference.setEncryptionAlgorithm(EncryptionAlgorithm.RSA_SHA_512);
+        preference.setEncryptionAlgorithm(EncryptionAlgorithm.RSA_SHA_256);
         preference.setPublicKeyID(configuration.getBoxPublicKeyId());
         preference.setPrivateKey(configuration.getBoxPrivateKey());
         preference.setPrivateKeyPassword(configuration.getBoxPrivateKeyPassword());
