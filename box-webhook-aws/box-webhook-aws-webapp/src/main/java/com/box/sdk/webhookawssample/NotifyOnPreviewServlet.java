@@ -90,7 +90,7 @@ public class NotifyOnPreviewServlet extends HttpServlet {
      * @param fileId id of file to be registered with the email
      * @param email  email to be registered for specified file and user
      * @return payload entity for Webhook Trigger registration resource
-     * @throws UnsupportedEncodingException
+     * @throws UnsupportedEncodingException on charset problem
      */
     private HttpEntity createWebhookTriggerEntity(String userId, String fileId, String email)
             throws UnsupportedEncodingException {
@@ -115,7 +115,7 @@ public class NotifyOnPreviewServlet extends HttpServlet {
 
         final BoxAPIConnection boxConnection = BoxHelper.userClient(userId);
         final BoxFile file = new BoxFile(boxConnection, fileId);
-        final URL webhookURL = createWebhookURL(webhookTriggerId);
+        final URL webhookURL = new URL(AWSHelper.getAPIGatewayInvokeWebhookEmailTriggerURL(webhookTriggerId));
         final BoxWebHook fileWebhook = findFileWebHook(boxConnection, file);
 
         if (fileWebhook != null) {
@@ -148,9 +148,5 @@ public class NotifyOnPreviewServlet extends HttpServlet {
         }
 
         return null;
-    }
-
-    private URL createWebhookURL(String webhookTriggerId) throws MalformedURLException {
-        return new URL(AWSHelper.getAPIGatewayInvokeWebhookEmailTriggerURL(webhookTriggerId));
     }
 }
