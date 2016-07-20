@@ -1,0 +1,6 @@
+box.enterpriseId={boxEnterpriseId}
+box.clientId={boxClientId}
+box.clientSecret={boxClientSecret}
+box.publicKeyId={boxPublicKeyId}
+box.privateKeyPassword={boxPrivateKeyPassword}
+box.privateKeyFile={boxPrivateKeyFile}

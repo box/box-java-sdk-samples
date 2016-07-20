@@ -1,0 +1,58 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+apply plugin: 'base'
+apply plugin: 'distribution'
+
+group = 'com.box.samples.awswebhook'
+version = '0.1.0-SNAPSHOT'
+
+description = """
+    Box: WebHook AWS Sample
+"""
+
+repositories {
+    mavenCentral()
+}
+
+def artifact(projectName, artifactPattern) {
+	Project project = project(projectName);
+	return fileTree(new File(project.buildDir, project.libsDirName)).matching{ include artifactPattern }.getSingleFile()
+}
+
+def distribution(projectName, artifactPattern) {
+	Project project = project(projectName);
+	return fileTree(new File(project.buildDir, project.distsDirName)).matching{ include artifactPattern }.getSingleFile()
+}
+
+task buildAWS {
+	inputs.dir 'config'
+	inputs.dir project(':box-webhook-aws-sns').buildDir
+	inputs.dir project(':box-webhook-aws-webapp').buildDir
+	outputs.dir "$distsDir/aws-s3" 
+		
+	doLast {
+		copy {
+		    from('config') {
+		        include 'cloudformation.json'
+		        filter (ReplaceTokens, tokens: [
+		            'box.samples.sns.cloudformation.s3.bucket' : project.hasProperty('box.samples.sns.cloudformation.s3.bucket') ? project.property('box.samples.sns.cloudformation.s3.bucket') : 'box-webhook-aws-config',
+		            'box.samples.sns.cloudformation.s3.key' : project.hasProperty('box.samples.sns.cloudformation.s3.key') ? project.property('box.samples.sns.cloudformation.s3.key') : '',
+		        ])
+		    }
+		    into "$distsDir/aws-s3"
+		}
+		copy {
+			from distribution(':box-webhook-aws-sns', 'box-webhook-aws-sns-*.zip')
+			into "$distsDir/aws-s3"
+			rename {name -> 'box-webhook-aws-sns.zip'}
+		}
+		copy {
+			from artifact(':box-webhook-aws-webapp', 'box-webhook-webapp-*.war')
+			into "$distsDir/aws-s3"
+			rename {name -> 'box-webhook-aws-webapp.war'}
+		}
+	}
+}
+
+buildAWS.dependsOn ':box-webhook-aws-sns:build', ':box-webhook-aws-webapp:build'
+build.dependsOn buildAWS
