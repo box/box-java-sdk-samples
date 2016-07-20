@@ -1,6 +1,6 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
-def root = file('../..').absolutePath
+def root = file('..').absolutePath
 
 apply plugin: 'checkstyle'
 apply plugin: 'java'
@@ -16,7 +16,7 @@ description = """
 
 checkstyle {
 	toolVersion = '7.0'
-	configFile = file(root + '/common/checkstyle/checkstyle.xml')
+	configFile = file(root + '/config/checkstyle/checkstyle.xml')
 	configProperties = [ root : "${root}" ]
 }
 
