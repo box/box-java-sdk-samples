@@ -4,7 +4,9 @@ Box Java SDK Samples
 box-appusers-java-sample
 ------------------------
 
-A sample Java Servlet application that can create and use box AppUser accounts.
+A sample Java Servlet application that can create and utilize Box AppUser accounts.
+Functionality includes user creation, file upload and download,
+file preview and basic file navigation.
 
 Copyright and License
 ---------------------
