@@ -1,13 +1,13 @@
 ## Using Box with App Users Servlets Example
 
-### This is a sample Application 
+### This is a Sample Application 
 ### THIS SAMPLE SHOULD NOT BE USED AS A MODEL FOR PRODUCTION CODE.  
 
-This is a sample java servlet to demonstrate how to create and use appusers through the Box Java SDK.
+This is a Sample Java Servlet to demonstrate how to create and use App Users through the Box Java SDK.
 
 We have not included any security features in the application and strictly recommend NOT to use any part of the application for production usage. Do not store any sensitive data in the application. 
 
-We recommend creating a test developer enterprise and a test application within the enterprise, and integrating the sample Box Applicaiton's API key with this sample Application. Once the testing is done, we recommend stopping the server , deleting the app from the Box developer console and ending all Box sessions tied to the sample application, and deleting the appusers created in the test enterprise from the admin console. 
+We recommend creating a test developer enterprise, a test application within the enterprise, and integrating the sample Box Application's API key with this Sample Application. Once the testing is done, we recommend stopping the server, deleting the app from the Box developer console, ending all Box sessions tied to the sample application, and deleting the App Users created in the test enterprise from the admin console. 
 
 The public and private key pairs used along with this sample application should not be reused with applications handling production data and should be discarded once testing completes
 
