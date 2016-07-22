@@ -142,7 +142,8 @@ public class NotifyOnPreviewServlet extends HttpServlet {
         final Iterable<BoxWebHook.Info> all = BoxWebHook.all(boxConnection);
 
         for (BoxWebHook.Info webhookInfo : all) {
-            if (webhookInfo.getTarget() != null && webhookInfo.getTarget().getType().equals(BoxResource.getResourceType(BoxFile.class))
+            if (webhookInfo.getTarget() != null
+                    && webhookInfo.getTarget().getType().equals(BoxResource.getResourceType(BoxFile.class))
                     && webhookInfo.getTarget().getId().equals(file.getID())) {
                 return webhookInfo.getResource();
             }
