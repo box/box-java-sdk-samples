@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxFile;
+import com.box.sdk.BoxResource;
 import com.box.sdk.BoxWebHook;
 import com.box.sdk.webhookawssample.helpers.AWSHelper;
 import com.box.sdk.webhookawssample.helpers.BoxHelper;
@@ -141,7 +142,7 @@ public class NotifyOnPreviewServlet extends HttpServlet {
         final Iterable<BoxWebHook.Info> all = BoxWebHook.all(boxConnection);
 
         for (BoxWebHook.Info webhookInfo : all) {
-            if (webhookInfo.getTarget() != null && webhookInfo.getTarget().getType() == BoxWebHook.TargetType.FILE
+            if (webhookInfo.getTarget() != null && webhookInfo.getTarget().getType().equals(BoxResource.getResourceType(BoxFile.class))
                     && webhookInfo.getTarget().getId().equals(file.getID())) {
                 return webhookInfo.getResource();
             }
