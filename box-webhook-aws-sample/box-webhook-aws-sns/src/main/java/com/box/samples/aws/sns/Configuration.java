@@ -7,14 +7,11 @@ import java.util.Properties;
 
 /**
  * Configuration for {@link BoxAWSSNSLambda}.
- *
- * @author Stanislav Dvorscak
- *
  */
 public class Configuration {
 
     /**
-     * @see {@link #getTableNameTopicByWebhook()}
+     * @see #getTableNameTopicByWebhook()
      */
     private final String tableNameTopicByWebhook;
 
@@ -32,11 +29,6 @@ public class Configuration {
      * @see #getBoxPublicKeyId()
      */
     private final String boxPublicKeyId;
-
-    /**
-     * Property holding name of the private key file.
-     */
-    private final String boxPrivateKeyFile;
 
     /**
      * @see #getBoxPrivateKeyPassword()
@@ -62,7 +54,6 @@ public class Configuration {
         this.boxClientId = properties.getProperty("box.clientId");
         this.boxClientSecret = properties.getProperty("box.clientSecret");
         this.boxPublicKeyId = properties.getProperty("box.publicKeyId");
-        this.boxPrivateKeyFile = properties.getProperty("box.privateKeyFile");
         this.boxPrivateKeyPassword = properties.getProperty("box.privateKeyPassword");
     }
 
@@ -98,7 +89,6 @@ public class Configuration {
     /**
      * @return Encrypted private key corresponding to {@link #getBoxPublicKeyId()}.
      * @see #getBoxPrivateKeyPassword()
-     * @throws Exception exception occurred while loading private key file
      */
     public String getBoxPrivateKey() {
         if (this.boxPrivateKey == null) {

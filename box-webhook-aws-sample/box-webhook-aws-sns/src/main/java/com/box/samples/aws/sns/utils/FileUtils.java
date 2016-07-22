@@ -2,9 +2,6 @@ package com.box.samples.aws.sns.utils;
 
 /**
  * {@link java.io.File} related utilities.
- *
- * @author Stanislav Dvorscak
- *
  */
 public class FileUtils {
 

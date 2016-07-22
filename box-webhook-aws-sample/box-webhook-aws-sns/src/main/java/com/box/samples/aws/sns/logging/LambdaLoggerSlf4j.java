@@ -17,9 +17,6 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 
 /**
  * SLF4j binding for {@link LambdaLogger}.
- *
- * @author Stanislav Dvorscak
- *
  */
 public class LambdaLoggerSlf4j extends MarkerIgnoringBase {
 

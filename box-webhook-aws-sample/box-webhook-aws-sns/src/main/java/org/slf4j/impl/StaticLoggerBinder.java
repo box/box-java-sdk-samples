@@ -7,9 +7,6 @@ import com.box.samples.aws.sns.logging.LambdaLoggerSlf4jLoggerFactory;
 
 /**
  * {@link LoggerFactoryBinder} for {@link LambdaLoggerSlf4jLoggerFactory}.
- *
- * @author Stanislav Dvorscak
- *
  */
 public final class StaticLoggerBinder implements LoggerFactoryBinder {
 

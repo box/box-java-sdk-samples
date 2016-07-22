@@ -4,9 +4,6 @@ package com.box.samples.aws.sns.validation;
  * Exception wrapper for {@link Validation}.
  *
  * @see Validation#validate()
- *
- * @author Stanislav Dvorscak
- *
  */
 public class ValidationException extends RuntimeException {
 

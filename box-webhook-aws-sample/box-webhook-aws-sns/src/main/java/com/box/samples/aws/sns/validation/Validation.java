@@ -9,9 +9,6 @@ import org.json.JSONObject;
 
 /**
  * Validation context.
- *
- * @author Stanislav Dvorscak
- *
  */
 public class Validation {
 
@@ -32,7 +29,7 @@ public class Validation {
      * @param path
      *            to the violated value
      * @param message
-     *            violation essage
+     *            violation message
      */
     public void addError(String path, String message) {
         List<JSONObject> violations = violations(path);
@@ -92,7 +89,7 @@ public class Validation {
             return null;
         }
         JSONObject result = new JSONObject();
-        this.violationsByPath.forEach((path, violation) -> result.put(path, violation));
+        this.violationsByPath.forEach(result::put);
         return result;
     }
 

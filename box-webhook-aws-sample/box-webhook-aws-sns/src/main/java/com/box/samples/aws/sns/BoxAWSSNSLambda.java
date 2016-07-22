@@ -33,9 +33,6 @@ import com.box.sdk.BoxFile.Info;
 
 /**
  * A AWS Lambda implementation.
- *
- * @author Stanislav Dvorscak
- *
  */
 public class BoxAWSSNSLambda implements RequestStreamHandler {
 
