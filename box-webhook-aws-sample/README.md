@@ -83,6 +83,9 @@ Files can be found in `build/distributions/aws-s3` directory.
 
 #### 4. Creating CloudFormation Stack
 
+ _Note:_
+ _In order for CloudFormation to be able to create resources necessary, make sure you have administrator access rights._
+
  1. Go to [CloudFormation Console](https://console.aws.amazon.com/cloudformation) and Create New Stack
  2. Use Choose File in Choose a template section and select `build/distributions/aws-s3/cloudformation.json`
  3. On the Next page (Specify Details) fill out Stack name (e.g. `box-webhook-aws-stack`) and S3 Bucket name, where you uploaded the packages
