@@ -24,9 +24,6 @@ import com.box.sdk.JWTEncryptionPreferences;
 
 /**
  * Services provider.
- *
- * @author Stanislav Dvorscak
- *
  */
 public class Services {
 

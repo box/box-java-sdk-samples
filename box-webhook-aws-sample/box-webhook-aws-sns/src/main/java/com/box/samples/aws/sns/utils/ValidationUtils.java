@@ -4,9 +4,6 @@ import com.box.samples.aws.sns.validation.Validation;
 
 /**
  * {@link Validation} related utilities.
- *
- * @author Stanislav Dvorscak
- *
  */
 public class ValidationUtils {
 

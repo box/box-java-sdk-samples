@@ -6,9 +6,6 @@ import com.box.samples.aws.sns.validation.Validation;
 
 /**
  * Builds responses.
- *
- * @author Stanislav Dvorscak
- *
  */
 public class ResponseBuilder {
 

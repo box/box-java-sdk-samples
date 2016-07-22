@@ -5,9 +5,6 @@ import java.io.StringWriter;
 
 /**
  * {@link Exception} related utilities.
- *
- * @author Stanislav Dvorscak
- *
  */
 public class ExceptionUtils {
 

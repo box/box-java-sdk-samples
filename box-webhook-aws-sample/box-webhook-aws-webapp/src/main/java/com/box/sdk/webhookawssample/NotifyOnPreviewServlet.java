@@ -27,7 +27,7 @@ import com.mashape.unirest.http.utils.ClientFactory;
 
 
 /**
- * @author Vladimir Hrusovsky
+ * Preview notification logic.
  */
 public class NotifyOnPreviewServlet extends HttpServlet {
     private HttpClient httpClient;

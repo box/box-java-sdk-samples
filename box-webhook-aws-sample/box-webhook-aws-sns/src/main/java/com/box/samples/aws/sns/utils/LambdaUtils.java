@@ -3,10 +3,7 @@ package com.box.samples.aws.sns.utils;
 import java.util.function.Supplier;
 
 /**
- * 'Lambda' related utlities.
- *
- * @author Stanislav Dvorscak
- *
+ * 'Lambda' related utilities.
  */
 public class LambdaUtils {
 
@@ -31,8 +28,6 @@ public class LambdaUtils {
 
     /**
      * Lazy supplier.
-     *
-     * @author Stanislav Dvorscak
      *
      * @param <T>
      *            type of value

@@ -4,9 +4,6 @@ import java.nio.charset.Charset;
 
 /**
  * {@link String} related utilities.
- *
- * @author Stanislav Dvorscak
- *
  */
 public class StringUtils {
 

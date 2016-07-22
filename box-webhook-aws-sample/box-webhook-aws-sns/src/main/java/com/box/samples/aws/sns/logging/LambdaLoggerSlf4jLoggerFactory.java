@@ -6,9 +6,6 @@ import org.slf4j.event.Level;
 
 /**
  * {@link ILoggerFactory} for {@link LambdaLoggerSlf4j}.
- *
- * @author Stanislav Dvorscak
- *
  */
 public class LambdaLoggerSlf4jLoggerFactory implements ILoggerFactory {
 

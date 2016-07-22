@@ -4,8 +4,6 @@ import java.text.MessageFormat;
 
 /**
  * AWS related helper methods.
- *
- * @author Vladimir Hrusovsky
  */
 public final class AWSHelper {
     private static final String API_GATEWAY_URL = System.getProperty("awsAPIGatewayURL");
