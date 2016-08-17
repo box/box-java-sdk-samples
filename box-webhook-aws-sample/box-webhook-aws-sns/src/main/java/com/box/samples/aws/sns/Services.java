@@ -33,6 +33,11 @@ public class Services {
     private final Logger logger = LoggerFactory.getLogger(Services.class);
 
     /**
+     * Current region.
+     */
+    private final Regions region = Regions.fromName(System.getProperty("AWS_DEFAULT_REGION"));
+
+    /**
      * @see #getConfiguration()
      */
     private final Supplier<Configuration> configurationProvider = LambdaUtils.lazy(this::configuration);
@@ -114,7 +119,7 @@ public class Services {
      */
     private AmazonSNS sns() {
         AmazonSNSClient result = new AmazonSNSClient();
-        result.setRegion(Region.getRegion(Regions.EU_CENTRAL_1));
+        result.setRegion(Region.getRegion(region));
         return result;
     }
 
@@ -130,7 +135,7 @@ public class Services {
      */
     private AmazonDynamoDB amazonDynamoDB() {
         AmazonDynamoDBClient result = new AmazonDynamoDBClient();
-        result.setRegion(Region.getRegion(Regions.EU_CENTRAL_1));
+        result.setRegion(Region.getRegion(region));
         return result;
     }
 
