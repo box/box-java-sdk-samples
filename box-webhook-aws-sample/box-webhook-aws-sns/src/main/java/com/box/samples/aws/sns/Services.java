@@ -35,7 +35,7 @@ public class Services {
     /**
      * Current region.
      */
-    private final Regions region = Regions.fromName(System.getProperty("AWS_DEFAULT_REGION"));
+    private final Regions region = Regions.fromName(System.getenv("AWS_DEFAULT_REGION"));
 
     /**
      * @see #getConfiguration()
