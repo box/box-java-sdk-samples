@@ -61,12 +61,12 @@ In order to get packages we need to configure AWS environment use Gradle build t
 
 For Mac/Linux:
 ```sh
-./gradlew clean build
+../gradlew clean build
 ```
 
 For Windows:
 ```cmd
-gradlew.bat clean build
+../gradlew.bat clean build
 ```
 
 The build process will build WAR file for our Web Application to be deployed on Elastic Beanstalk, ZIP file for Lambda function and also CloudFormation configuration file.
@@ -103,5 +103,7 @@ Files can be found in `build/distributions/aws-s3` directory.
  2. Login as your AppUser (or create a new one)
  3. Open any of your files, which supports Preview (or upload a new one)
  4. Now you can fill out Email Address for notification and confirm it by OK
- 5. If everything is set up properly you should get Subscription Confirmation Email from AWS Notifications, which you must Confirm (using the link in email)
- 6. Preview the file to test the functionality
+ 5. If everything is set up properly you should get Subscription Confirmation Email from AWS Notifications, 
+    which you must Confirm (using the link in email).  Note:  If you don't see this confirmation email, check you spam folder.
+ 6. Preview the file to test the functionality.  You should receive an email describing the file previewed and the user who previewed it.
+ 

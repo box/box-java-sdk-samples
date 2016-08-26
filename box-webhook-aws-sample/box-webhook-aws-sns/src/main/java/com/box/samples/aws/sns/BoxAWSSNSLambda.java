@@ -28,8 +28,11 @@ import com.box.samples.aws.sns.validation.Validation;
 import com.box.samples.aws.sns.validation.ValidationException;
 import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxAPIException;
+import com.box.sdk.BoxEnterprise;
 import com.box.sdk.BoxFile;
 import com.box.sdk.BoxFile.Info;
+import com.box.sdk.BoxUser;
+
 
 /**
  * A AWS Lambda implementation.
@@ -304,14 +307,29 @@ public class BoxAWSSNSLambda implements RequestStreamHandler {
         BoxAPIConnection boxAPIConnection = this.services.getBoxAPIConnection(userId);
         BoxFile file = new BoxFile(boxAPIConnection, fileId);
         Info fileInfo = file.getInfo();
-        return new StringBuilder()
-            .append("File: ")
+        BoxUser user = new BoxUser(boxAPIConnection, userId);
+        BoxUser.Info userInfo = user.getInfo("name", "login", "enterprise");
+        BoxEnterprise enterprise = userInfo.getEnterprise();
+        String name = userInfo.getLogin();
+        String message;
+        message = new StringBuilder()
+                                  .append("File: ")
                                   .append(fileInfo.getName())
                                   .append('\n')
                                   .append("Size: ")
                                   .append(FileUtils.humanReadableSize(fileInfo.getSize()))
                                   .append('\n')
+                                  .append("Was previewed by User: ")
+                                  .append(userInfo.getName())
+                                  .append('\n')
+                                  .append("User's Login Name: ")
+                                  .append(userInfo.getLogin())
+                                  .append('\n')
+                                  .append("from Enterprise: ")
+                                  .append(enterprise == null ? "none" : enterprise.getName())
+                                  .append('\n')
                                   .toString();
+        return message;
     }
 
 }

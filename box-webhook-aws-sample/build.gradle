@@ -11,7 +11,8 @@ description = """
 """
 
 repositories {
-    mavenCentral()
+	mavenLocal()
+
 }
 
 def artifact(projectName, artifactPattern) {

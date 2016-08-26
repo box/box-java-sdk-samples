@@ -38,6 +38,17 @@
           </div>
         </div>
         <div class='row'>
+           <div class='col-md-2'>
+             <div class='key'>
+               File Id:
+             </div>
+           </div>
+           <div class='col-md-10'>
+             <div class='value'>
+               ${fileId}
+             </div>
+           </div>
+         </div>        <div class='row'>
           <div class='col-md-2'>
             <div class='key'>
               Created At:

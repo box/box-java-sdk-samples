@@ -28,8 +28,9 @@ sourceCompatibility = 1.8
 targetCompatibility = sourceCompatibility
 
 repositories {
-    mavenCentral()
     mavenLocal()
+    mavenCentral()
+
 }
 
 processResources {
