@@ -7,6 +7,17 @@ box-appusers-java-sample
 A sample Java Servlet application that can create and utilize Box App User accounts.
 Functionality includes App User creation, file upload and download, file preview and basic file navigation.
 
+box-webhook-aws-sample
+----------------------
+
+A sample Java Servlet application that can create and utilize Box App User accounts.
+Functionality includes App User creation, file upload and download, file preview, basic file navigation,
+and the ability to create a webhook which allows the user to specify and email address to be
+notified whenever the given file is previewed.
+
+Ths sample uses Amazon AWS services and Box Webhooks V2 to enable these notifications.
+
+
 Copyright and License
 ---------------------
 
