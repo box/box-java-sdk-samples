@@ -1,0 +1,66 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+def root = file('..').absolutePath
+
+apply plugin: 'checkstyle'
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+
+group = 'com.box.samples.aws.sns'
+version = '0.1.0-SNAPSHOT'
+
+description = """
+    Box: WebHook AWS SNS
+"""
+
+checkstyle {
+	toolVersion = '7.0'
+	configFile = file(root + '/config/checkstyle/checkstyle.xml')
+	configProperties = [ root : "${root}" ]
+}
+
+checkstyleMain { classpath += configurations.compile }
+checkstyleTest { classpath += configurations.compile }
+
+sourceCompatibility = 1.8
+targetCompatibility = sourceCompatibility
+
+repositories {
+    mavenLocal()
+    maven { url "http://repo.maven.apache.org/maven2" }
+}
+
+processResources {
+    from('src/main/resources') {
+        include 'box-samples-aws-sns.properties'
+        filter (ReplaceTokens, tokens: [
+            "box.clientId" : project.property("box.clientId"),
+            "box.clientSecret" : project.property("box.clientSecret"),
+            "box.publicKeyId" : project.property("box.publicKeyId"),
+            "box.privateKeyPassword" : project.property("box.privateKeyPassword")
+        ])
+    }
+
+    from(project.property('box.privateKeyFile')) {
+        rename '.*', 'private_key.pem'
+    }
+}
+
+dependencies {
+    compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.21'
+    compile group: 'org.json', name: 'json', version:'20160212'
+    compile group: 'com.amazonaws', name: 'aws-lambda-java-core', version:'1.1.0'
+    compile group: 'com.amazonaws', name: 'aws-java-sdk-dynamodb', version:'1.11.2'
+    compile group: 'com.amazonaws', name: 'aws-java-sdk-sns', version:'1.11.2'
+    compile group: 'com.box', name: 'box-java-sdk', version:'2.2.1-SNAPSHOT'
+}
+
+task buildLambda(type: Zip) {
+    into('lib') {
+        from configurations.runtime.artifacts.files
+        from configurations.runtime
+    }           
+}
+
+build.dependsOn buildLambda

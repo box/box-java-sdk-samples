@@ -1,0 +1,394 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Parameters": {
+    "ParameterProjectS3Bucket": {
+      "Description": "Project S3 Bucket",
+      "Type": "String",
+      "Default": "@box.samples.sns.cloudformation.s3.bucket@"
+    },
+    "ParameterProjectS3Path": {
+      "Description": "Folder path within the Bucket containing the files (URI)",
+      "Type": "String",
+      "Default": "@box.samples.sns.cloudformation.s3.key@"
+    }
+  },
+
+  "Conditions": {
+    "IsS3PathEmpty": { "Fn::Equals": ["", { "Ref": "ParameterProjectS3Path" }] }
+  },
+
+  "Outputs": {
+    "WebAppEndpointURL": {
+      "Value": { "Fn::Join": [ "", [  "http://", { "Fn::GetAtt": [ "elasticBeanstalkEnvironment", "EndpointURL" ] } ] ] },
+      "Description": "URL of the Web Application"
+    }
+  },
+
+  "Resources": {
+    "AWSLambdaRole" : {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument" : {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": { "Service": "lambda.amazonaws.com" },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies" : [{
+          "PolicyName" : "AWSLambdaRole",
+          "PolicyDocument" : {
+            "Version": "2012-10-17",
+            "Statement": [ {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": [ "arn:aws:logs:*:*:log-group:/aws/lambda/box-sns:*" ]
+            },{
+              "Effect": "Allow",
+              "Action": [
+                "dynamodb:PutItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:GetItem"
+              ],
+              "Resource": [
+                "arn:aws:dynamodb:*:*:table/box_webhook_sns"
+              ]
+            },{
+              "Effect": "Allow",
+              "Action": [
+                "SNS:CreateTopic",
+                "SNS:Subscribe",
+                "SNS:Publish"
+              ],
+              "Resource": [ "arn:aws:sns:*:*:*" ]
+            }]
+          }
+        }]
+      }
+    },
+    "APIGatewayLambdaRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [ {
+            "Effect": "Allow",
+            "Principal": {
+              "Service": [ "apigateway.amazonaws.com" ]
+            },
+            "Action": [ "sts:AssumeRole" ]
+          }]
+        },
+        "Policies": [{
+          "PolicyName": "APIGatewayLambdaAccess",
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [{
+              "Sid": "APIGatewayLambdaInvokeAccess",
+              "Effect": "Allow",
+              "Action": [ "lambda:InvokeFunction" ],
+              "Resource": [ { "Fn::GetAtt": [ "SNSLambda", "Arn" ] } ]
+            }]
+          }
+        }]
+      },
+      "DependsOn": [ "SNSLambda" ]
+    },
+    "EC2InstanceRole" : {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version" : "2012-10-17",
+          "Statement": [{
+            "Effect": "Allow",
+            "Principal": { "Service": [ "ec2.amazonaws.com" ] },
+            "Action": [ "sts:AssumeRole" ]
+          }]
+        },
+        "Policies": [{
+          "PolicyName" : "EC2InstanceRole",
+          "PolicyDocument" : {
+            "Version": "2012-10-17",
+            "Statement": [{
+              "Sid": "MetricsAccess",
+              "Action": [
+                "cloudwatch:PutMetricData"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },{
+              "Sid": "QueueAccess",
+              "Action": [
+                "sqs:ChangeMessageVisibility",
+                "sqs:DeleteMessage",
+                "sqs:ReceiveMessage",
+                "sqs:SendMessage"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },{
+              "Sid": "BucketAccess",
+              "Action": [
+                "s3:Get*",
+                "s3:List*",
+                "s3:PutObject"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:aws:s3:::elasticbeanstalk-*",
+                "arn:aws:s3:::elasticbeanstalk-*/*"
+              ]
+            },{
+              "Sid": "DynamoPeriodicTasks",
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:GetItem",
+                "dynamodb:PutItem",
+                "dynamodb:Query",
+                "dynamodb:Scan",
+                "dynamodb:UpdateItem"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:aws:dynamodb:*:*:table/*-stack-AWSEBWorkerCronLeaderRegistry*"
+              ]
+            }]
+          }
+        }]
+      }
+    },
+    "EC2InstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [ { "Ref": "EC2InstanceRole" } ]
+      }
+    },
+    "SNSTableFileIDMapping": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "box_webhook_sns",
+        "AttributeDefinitions": [
+          { "AttributeName": "webHookId", "AttributeType": "S" }
+        ],
+        "KeySchema": [
+          { "AttributeName": "webHookId", "KeyType": "HASH" }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        }
+      }
+    },
+    "SNSLambda": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": "box-sns",
+        "Description": "SNS Lambda",
+        "Code": {
+          "S3Bucket": { "Ref": "ParameterProjectS3Bucket" },
+          "S3Key": { "Fn::If": ["IsS3PathEmpty", "box-webhook-aws-sns.zip", { "Fn::Join" : ["/" , [ { "Ref": "ParameterProjectS3Path" }, "box-webhook-aws-sns.zip"] ] }] }
+        },
+        "Handler": "com.box.samples.aws.sns.BoxAWSSNSLambda",
+        "MemorySize": 512,
+        "Timeout": 15,
+        "Role": { "Fn::GetAtt" : [ "AWSLambdaRole", "Arn"] },
+        "Runtime": "java8"
+      },
+      "DependsOn": [
+        "SNSTableFileIDMapping",
+        "AWSLambdaRole"
+      ]
+    },
+
+    "SNSAPIGatewayApi": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Name": "SNS API Gateway"
+      },
+      "DependsOn": [ "SNSLambda" ]
+    },
+
+    "SNSAPIGatewayResourceSNS": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "RestApiId": { "Ref": "SNSAPIGatewayApi" },
+        "ParentId": { "Fn::GetAtt": [ "SNSAPIGatewayApi", "RootResourceId" ] },
+        "PathPart": "sns"
+      }
+    },
+    "SNSAPIGatewayResourceSNSEmail": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "RestApiId": { "Ref": "SNSAPIGatewayApi" },
+        "ParentId": { "Ref": "SNSAPIGatewayResourceSNS" },
+        "PathPart": "email"
+      }
+    },
+    "SNSAPIGatewayResourceSNSPing": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "RestApiId": { "Ref": "SNSAPIGatewayApi" },
+        "ParentId": { "Ref": "SNSAPIGatewayResourceSNS" },
+        "PathPart": "ping"
+      }
+    },
+    "SNSAPIGatewayResourceSNSBox": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "RestApiId": { "Ref": "SNSAPIGatewayApi" },
+        "ParentId": { "Ref": "SNSAPIGatewayResourceSNS" },
+        "PathPart": "box"
+      }
+    },
+    "SNSAPIGatewayResourceSNSBoxPreview": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "RestApiId": { "Ref": "SNSAPIGatewayApi" },
+        "ParentId": { "Ref": "SNSAPIGatewayResourceSNSBox" },
+        "PathPart": "preview"
+      }
+    },
+    "SNSAPIGatewayResourceSNSBoxPreviewWebhook": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "RestApiId": { "Ref": "SNSAPIGatewayApi" },
+        "ParentId": { "Ref": "SNSAPIGatewayResourceSNSBoxPreview" },
+        "PathPart": "{webHookId}"
+      }
+    },
+    "SNSAPIGatewayResourceSNSEmailPost": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "RestApiId": { "Ref": "SNSAPIGatewayApi" },
+        "ResourceId": { "Ref": "SNSAPIGatewayResourceSNSEmail" },
+        "HttpMethod": "POST",
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "Type": "AWS",
+          "Credentials": { "Fn::GetAtt": [ "APIGatewayLambdaRole", "Arn" ] },
+          "Uri": { "Fn::Join": [ "", [ "arn:aws:apigateway:", { "Ref": "AWS::Region" }, ":lambda:path/2015-03-31/functions/", { "Fn::GetAtt": [ "SNSLambda", "Arn" ] }, "/invocations" ] ] },
+          "RequestTemplates": {
+            "application/json": "{\n  \"command\": \"/sns/e-mail\",\n  \"email\": $input.json('email'),\n  \"userId\": $input.json('userId'),\n  \"fileId\": $input.json('fileId')\n}\n"
+          },
+          "IntegrationHttpMethod": "POST",
+          "IntegrationResponses": [ { "StatusCode": "200" } ]
+        },
+        "MethodResponses": [ { "StatusCode": "200", "ResponseModels": { "application/json": "Empty" } } ]
+      }
+    },
+    "SNSAPIGatewayResourceSNSBoxPingGet": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "RestApiId": { "Ref": "SNSAPIGatewayApi" },
+        "ResourceId": { "Ref": "SNSAPIGatewayResourceSNSPing" },
+        "HttpMethod": "GET",
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "Type": "AWS",
+          "Credentials": { "Fn::GetAtt": [ "APIGatewayLambdaRole", "Arn" ] },
+          "Uri": { "Fn::Join": [ "", [ "arn:aws:apigateway:", { "Ref": "AWS::Region" }, ":lambda:path/2015-03-31/functions/", { "Fn::GetAtt": [ "SNSLambda", "Arn" ] }, "/invocations" ] ] },
+          "RequestTemplates": { "application/json": "{\n    \"command\" : \"/ping\"\n}" },
+          "IntegrationHttpMethod": "POST",
+          "IntegrationResponses": [ { "StatusCode": "200" } ]
+        },
+        "MethodResponses": [ { "StatusCode": "200", "ResponseModels": { "application/json": "Empty" } } ]
+      },
+      "DependsOn": [ "APIGatewayLambdaRole" ]
+    },
+    "SNSAPIGatewayResourceSNSBoxPreviewWebhookPost": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "RestApiId": { "Ref": "SNSAPIGatewayApi" },
+        "ResourceId": { "Ref": "SNSAPIGatewayResourceSNSBoxPreviewWebhook" },
+        "HttpMethod": "POST",
+        "AuthorizationType": "NONE",
+        "RequestParameters": { "method.request.path.webHookId": true },
+        "Integration": {
+          "Type": "AWS",
+          "Credentials": { "Fn::GetAtt": [ "APIGatewayLambdaRole", "Arn" ] },
+          "Uri": { "Fn::Join": [ "", [ "arn:aws:apigateway:", { "Ref": "AWS::Region" }, ":lambda:path/2015-03-31/functions/", { "Fn::GetAtt": [ "SNSLambda", "Arn" ] }, "/invocations" ] ] },
+          "RequestTemplates": { "application/json": "{\n  \"command\": \"/box/preview\",\n  \"webHookId\": \"$input.params('webHookId')\",\n  \"fileId\" : $input.json('source.id')\n}" },
+          "IntegrationHttpMethod": "POST",
+          "IntegrationResponses": [ { "StatusCode": "200" } ]
+        },
+        "MethodResponses": [ { "StatusCode": "200", "ResponseModels": { "application/json": "Empty" } } ]
+      }
+    },
+    "SNSAPIGatewayDeployment": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "Properties": {
+        "RestApiId": { "Ref": "SNSAPIGatewayApi" },
+        "StageName": "latest"
+      },
+      "DependsOn": [
+        "SNSAPIGatewayResourceSNSBoxPingGet",
+        "SNSAPIGatewayResourceSNSEmailPost",
+        "SNSAPIGatewayResourceSNSBoxPreviewWebhookPost"
+      ]
+    },
+    "elasticBeanstalkApplication": {
+      "Type": "AWS::ElasticBeanstalk::Application",
+      "Properties": {
+        "ApplicationName": "WebhookSampleApplication",
+        "Description": "AWS Elastic Beanstalk Application for Webhook Sample Web Application"
+      }
+    },
+    "elasticBeanstalkApplicationVersion": {
+      "Type": "AWS::ElasticBeanstalk::ApplicationVersion",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "elasticBeanstalkApplication"
+        },
+        "Description": "AWS Elastic Beanstalk Application for Webhook Sample Web Application Version",
+        "SourceBundle": {
+          "S3Bucket": { "Ref": "ParameterProjectS3Bucket" },
+          "S3Key": { "Fn::If": ["IsS3PathEmpty", "box-webhook-aws-webapp.war", { "Fn::Join" : ["/" , [ { "Ref": "ParameterProjectS3Path" }, "box-webhook-aws-webapp.war"] ] }] }
+        }
+      }
+    },
+    "elasticBeanstalkEnvironment": {
+      "Type": "AWS::ElasticBeanstalk::Environment",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "elasticBeanstalkApplication"
+        },
+        "EnvironmentName": "WebhookSampleEnvironment",
+        "Description": "AWS Elastic Beanstalk Environment for Webhook Sample Web Application",
+        "SolutionStackName": "64bit Amazon Linux 2016.03 v2.1.3 running Tomcat 8 Java 8",
+        "Tier": {
+          "Name": "WebServer",
+          "Type": "Standard",
+          "Version": "1.0"
+        },
+        "OptionSettings": [
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "awsAPIGatewayURL",
+            "Value": { "Fn::Join": [ "", [ "https://", { "Ref": "SNSAPIGatewayApi" }, ".execute-api.", { "Ref": "AWS::Region" }, ".amazonaws.com/latest" ]  ] }
+          },
+          {
+            "Namespace": "aws:autoscaling:launchconfiguration",
+            "OptionName": "IamInstanceProfile",
+            "Value": { "Ref": "EC2InstanceProfile" }
+          }
+        ],
+        "VersionLabel": { "Ref": "elasticBeanstalkApplicationVersion" }
+      },
+      "DependsOn": [
+        "SNSAPIGatewayApi",
+        "EC2InstanceProfile"
+      ]
+    }
+  }
+}
